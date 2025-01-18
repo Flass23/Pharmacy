@@ -16,15 +16,9 @@ def make_shell_context():
 
 
 def create_Admin():
-    hashed_password = generate_password_hash('objointadmin1password')
+    hashed_password = generate_password_hash('vitalwaypassword')
 
-    user = User(username="pitechadmin1",
-                firstname="khauhelo",
-                lastname="Makara",
-                email="khauhelo1@gmail.com",
-                isadmin=True,
-                password=hashed_password,
-                confirmed=True)
+    user = User(username="admin",firstname="khauhelo",lastname="Makara",email="khauhelomakara031@gmail.com",isadmin=True,password=hashed_password)
     db.session.add(user)
     try:
         db.session.commit()
