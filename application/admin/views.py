@@ -126,7 +126,7 @@ def updatestatus(order_id):
 @admin.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('admin.login'))
+    return redirect(url_for('admin.newlogin'))
 
 
 
