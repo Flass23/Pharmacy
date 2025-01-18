@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <style>
+        /* Basic Reset */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Section */
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+        }
+
+        .header p {
+            font-size: 1.2em;
+        }
+
+        /* Main Section - Buttons */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 18px 30px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .shop-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .shop-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .chat-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .chat-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Chat Modal Styling */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: white;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 320px;
+            height: 400px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .chat-modal.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-modal header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-modal .chat-content {
+            height: 280px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .chat-modal .chat-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .chat-modal .chat-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .chat-modal .send-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .chat-modal .send-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Close Button */
+        .close-chat {
+            cursor: pointer;
+            font-size: 18px;
+            color: #007bff;
+            background: none;
+            border: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 16px;
+            }
+
+            .chat-modal {
+                width: 90%;
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div class="header">
+        <h1>Welcome to Your Dashboard</h1>
+        <p>What would you like to do today?</p>
+    </div>
+
+    <!-- Main Section - Buttons -->
+    <div class="container">
+        <div class="button-container">
+            <!-- Shop Button -->
+            <button class="btn shop-btn" onclick="window.location.href='{{ url_for('main.menu', page_num=1) }}'">Go to Shop</button>
+  <button class="btn chat-btn" onclick="window.location.href='{{ url_for('main.myorders')}}'">View Orders</button>
+
+        </div>
+    </div>
+    </body>
+    </html>
+

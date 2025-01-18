@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - VitalWay Pharmacy</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/addprod.css') }}">
+
+</head>
+<body>
+
+<div class="container">
+    <h1>Add New Product</h1>
+
+    <!-- Product Add Form -->
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }} <!-- This is for CSRF protection -->
+
+        <!-- Product Name -->
+        <div class="form-group">
+
+            {{form.product_name.label}}
+            {{ form.product_name(class="form-control") }}
+        </div>
+
+        <!-- Product Price -->
+        <div class="form-group">
+            {{form.product_price.label}}
+            {{ form.product_price(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{form.product_quantity.label}}
+            {{ form.product_quantity(class="form-control") }}
+        </div>
+
+        <!-- Product Description -->
+        <div class="form-group">
+            {{form.product_description.label}}
+            {{ form.product_description(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{form.product_usage.label}}
+            {{ form.product_usage(class="form-control") }}
+        </div>
+
+        <!-- Product Image -->
+        <div class="form-group">
+            {{form.product_pictures.label}}
+            {{ form.product_pictures(class="form-control") }}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">Add Product</button>
+    </form>
+
+    <!-- Back to Products Page -->
+    <a href="{{ url_for('admin.products', page_num=1) }}" class="back-btn">Back to Product List</a>
+</div>
+
+</body>
+</html>

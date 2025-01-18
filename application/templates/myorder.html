@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Pharmacy</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
+
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <a href="/">Pharmacy Logo</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for medications...">
+        </div>
+        <div class="user-actions">
+            <span class="account-icon">Account</span>
+            <span class="cart-icon">Cart ({{total_count}})</span>
+            <span class="notification-bell">🔔</span>
+        </div>
+    </header>
+
+    <!-- Orders Overview Section -->
+    <main>
+        <div class="order-filters">
+            <button class="active">Active Orders</button>
+            <button>Completed Orders</button>
+            <button>Canceled Orders</button>
+
+
+        </div>
+
+        <!-- Active Orders -->
+        <section class="order-list" id="active-orders">
+            <div class="order-card">
+                <h3>Order #12345</h3>
+                <p>Status: Processing</p>
+                <p>Order Date: 2025-01-10</p>
+                <p>Total: $50.00</p>
+                <button class="track-order">Track Order</button>
+                <button class="reorder">Reorder</button>
+                <button class="view-details" data-order-id="12345">View Details</button>
+            </div>
+            <!-- Repeat order-card for more orders -->
+        </section>
+
+        <!-- Completed Orders -->
+        <section class="order-list" id="completed-orders" style="display: none;">
+            <!-- Order details for completed orders -->
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Pharmacy. All rights reserved.</p>
+    </footer>
+
+    <script src="orders.js"></script>
+</body>
+</html>
