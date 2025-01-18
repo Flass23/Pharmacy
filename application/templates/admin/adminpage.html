@@ -6,10 +6,10 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/adminpg.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
         <h2>Admin Dashboard</h2>
         <ul>
             <li><a href="/home">Dashboard</a></li>
@@ -20,36 +20,25 @@
             <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
-    <div class="main-content">
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
         <header>
+            <button id="toggleSidebarBtn" class="toggle-sidebar-btn">☰</button>
             <h1>Welcome, Admin</h1>
         </header>
         <section class="sales-overview">
             <h2>Sales Overview</h2>
-            <canvas id="salesChart"></canvas>
+            <!-- You can add content or other elements here if needed -->
         </section>
     </div>
+
+    <!-- Toggle Sidebar Logic -->
     <script>
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var salesChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [{
-                    label: 'Sales',
-                    data: [1200, 1900, 3000, 5000, 2300, 3400, 4200],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+        // Toggle sidebar visibility
+        document.getElementById('toggleSidebarBtn').addEventListener('click', function() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
         });
     </script>
 </body>
