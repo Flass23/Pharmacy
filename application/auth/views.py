@@ -8,6 +8,7 @@ from ..forms import LoginForm, RegistrationForm
 from .. import (login_manager, db)
 from sqlalchemy.exc import IntegrityError
 from flask_mail import Message, Mail
+from smtplib import SMTPAuthenticationError
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 s = URLSafeTimedSerializer('ad40898f84d46bd1d109970e23c0360e')
@@ -26,8 +27,8 @@ def adduser(form, is_admin):
                     lastname=form.lastName.data,
                     email=form.Email.data,
                     isadmin=True,
-                    password=hashed_password,
-                    confirmed=True)
+                    password=hashed_password
+                    )
         return user
     elif not is_admin:
         user = User(username=form.username.data,
@@ -35,8 +36,8 @@ def adduser(form, is_admin):
                     lastname=form.lastName.data,
                     email=form.Email.data,
                     isadmin=False,
-                    password=hashed_password,
-                    confirmed=True)
+                    password=hashed_password
+                    )
         return user
     else:
         return 'something was incorrect'
@@ -49,10 +50,20 @@ def send_email(form):
     msg = Message('Confirm Email', sender='pitechcorp7@gmail.com', recipients=[form.Email.data])
     link = url_for('auth.confirm_email', token=token, _external=True)
 
-    msg.body = ('Next step is to click the following link then you can start ordering with us. Your '
+    msg.body = ('Next step is to click the following link to check if Your your email real/ '
                 'link is {}. We are really glad you choose us, remember the more you purchase the you increase your loyalty points, of which you can use later to buy free meals.').format(
         link)
-    mail.send(msg)
+    try:
+        mail.send(msg)
+        print("message sent")
+    except SMTPAuthenticationError as e:
+        print('error 1')
+        flash("Failed to send email: Authentication Error. Check your email/password settings.")
+        print(e)
+    except Exception as e:
+        flash("Failed to send email due to unexpected error.")
+        print('error 2')
+        print(e)
     return token
 
 
@@ -68,36 +79,52 @@ def register():
     form = RegistrationForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            print("form successfully submitted for registration")
-            hashed_password = flask_bcrypt.generate_password_hash(form.Password.data).decode(
-                'utf-8')
+            ##encrypt password
             isadmin = form.option.data
-            print(hashed_password, isadmin)
-            users = User(username=form.username.data,
-                             firstname=form.firstName.data,
-                             lastname=form.lastName.data,
-                             email=form.Email.data,
-                             isadmin=False,
-                             password=hashed_password)
+            token = ''
+            if isadmin:
+                users = adduser(form, isadmin)
+                print("Authenticating...")
+                db.session.add(users)
+                try:
+                    db.session.commit()
+                    user = User.query.filter_by(email=form.Email.data).first()
+                    if user.confirmed:
+                        return redirect(url_for('auth.newlogin'))  ##this is just for testing
+                    else:
+                        token = send_email(form)
+                        return redirect(url_for('auth.unconfirmed', token=token))
+                except IntegrityError:
+                    db.session.rollback()
+                    flash('Username or email already exist')
+                except TimeoutError:
+                    db.session.rollback()
+                    flash('Timeout error')
+                    return redirect(url_for('auth.register'))
+            else:
+                users = adduser(form, isadmin)
+                db.session.add(users)
 
-            print("Adding...")
-            db.session.add(users)
-            try:
-                db.session.commit()
-            except IntegrityError:
-                flash('Username or email already exist')
-                return redirect(url_for('auth.register'))
-
-            print("Done...")
-            flash("Registration done, you can now login")
-            return redirect(url_for('auth.newlogin'))
-
+                try:
+                    db.session.commit()
+                    user = User.query.filter_by(email=form.Email.data).first()
+                    if user.confirmed:
+                        return redirect(url_for('auth.newlogin'))  ##this is just for testing
+                    else:
+                        token = send_email(form)
+                        return redirect(url_for('auth.unconfirmed', token=token))
+                except IntegrityError:
+                    db.session.rollback()
+                    flash('Username or email already exist')
+                    return redirect(url_for('auth.register'))
+                # print("Done...")
+                flash("Registration done, you can now login")
+                return redirect(url_for('auth.newlogin'))
         else:
             flash("Failed to register")
-            print("form failed to validate on submit")
             return redirect(url_for('auth.register'))
+    form = RegistrationForm(formdata=None)
     return render_template('auth/register.html', form=form)
-
 
 @auth.route('/newlogin', methods=['GET', 'POST'])
 def newlogin():
@@ -136,27 +163,43 @@ def confirm_token(token, expiration=3600):
         return False
 
 
-@auth.route('/confirm_email/<token>')
-@login_required
+from flask import flash, redirect, url_for, render_template
+from itsdangerous import SignatureExpired
+from flask_login import login_user
+
+
+@auth.route('/confirm_email/<token>', methods=['GET'])
 def confirm_email(token):
     try:
+        # Decode the token to retrieve the email
         email = s.loads(token, max_age=5000)
-        user_id = User.query.filter(email=email).first()
 
-        user = User.query.get_or_404(user_id)
+        # Find the user by email (no need to use user_id separately)
+        user = User.query.filter_by(email=email).first()
+
         if user:
-
+            # Mark the user as confirmed
             user.confirmed = True
             flash('Account was successfully confirmed')
-            return redirect(url_for('auth.login'))
+            # Log the user in (if necessary)
+            login_user(user)
+            return redirect(url_for('auth.newlogin'))
         else:
-            flash('something went wroung')
-            print('something went wrong'
-            )
+            flash('Something went wrong. User not found.')
+            print('Something went wrong: User not found.')
+            return redirect(url_for('auth.register'))  # Redirect to a registration or error page
+
     except SignatureExpired:
-        return '<h1>The token expired</h1>'
-    return render_template('confirm_email')
-        
+        return '<h1>The token expired</h1>'  # Show a message if the token is expired
+    except Exception as e:
+        flash(f"Error: {str(e)}")
+        print(f"Error: {str(e)}")
+        return render_template('auth/email/confirm_email.html')
+
+    # In case no valid user is found or other errors
+    return render_template('auth/email/confirm_email.html')
+
+
 @auth.route('/unconfirmed')
 def unconfirmed():
     return render_template('auth/email/unconfirmed.html')

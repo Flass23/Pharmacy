@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import *
-#from flask_mail import Mail
+from flask_mail import Mail
 
 db = SQLAlchemy()
 UPLOAD_PATH = 'static/css/images/profiles/'
@@ -25,8 +25,8 @@ def create_app(config_name):
     app.config['UPLOAD_PRODUCTS'] = UPLOAD_PRODUCTS
 
     db.init_app(app)
-    #mail = Mail(app)
-    #mail.init_app(app)
+    mail = Mail(app)
+    mail.init_app(app)
 
     #routes will go here
     #blueprint registration

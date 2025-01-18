@@ -1,6 +1,6 @@
 from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedSerializer
-
+from flask import current_app
 from . import login_manager, db
 from datetime import datetime
 
@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
 
     def generate_confirmation_token(self, expiration=4600):
         s = TimedSerializer(current_app.config['SECRET_KEY'], expiration)
-        #serializer = TimedSerializer('your_secret_key', expires_in=3600)
+#       serializer = TimedSerializer('your_secret_key', expires_in=3600)
         return s.dumps({'confirm': self.id})
 
     def confirm(self, token):

@@ -10,9 +10,14 @@
 <body>
 
 <h1>Admin Product Display</h1>
+{%with messages = get_flashed_messages()%}
+    {%if messages%}
+        {%for message in messages%}
+            {{ message }}
+        {%endfor%}
+    {%endif%}
+{%endwith%}
             <a class='view-details-btn' href="{{ url_for('admin.addproducts')}}">Add More</a>
-
-
 
 <table class="product-table">
   <thead>

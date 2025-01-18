@@ -179,6 +179,13 @@
     <div class="header">
         <h1>Welcome to Your Dashboard</h1>
         <p>What would you like to do today?</p>
+{%with messages = get_flashed_messages()%}
+    {%if messages%}
+        {%for message in messages%}
+            {{ message }}
+        {%endfor%}
+    {%endif%}
+{%endwith%}
     </div>
 
     <!-- Main Section - Buttons -->

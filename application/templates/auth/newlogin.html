@@ -135,6 +135,13 @@
     <header>
         <h1>VitalWay Pharmacy</h1>
         <p>Login or Register to access your account</p>
+{%with messages = get_flashed_messages()%}
+    {%if messages%}
+        {%for message in messages%}
+            {{ message }}
+        {%endfor%}
+    {%endif%}
+{%endwith%}
     </header>
 
     <!-- Forms Container -->
