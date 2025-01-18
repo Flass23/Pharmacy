@@ -34,4 +34,4 @@ def create_Admin():
 if __name__ == '__main__':
     server = Server(app.wsgi_app)
     server.serve()
-    app.run(debug=True, port=8080)
+    app.run(host='0.0.0.0', port=4000)
