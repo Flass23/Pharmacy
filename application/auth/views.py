@@ -1,9 +1,10 @@
 from flask import render_template, redirect, url_for, session, request, flash, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..models import User
-import flask_bcrypt
+from flask_bcrypt import Bcrypt
 from flask_login import login_user, current_user, login_required
 from . import auth
+
 from ..forms import LoginForm, RegistrationForm
 from .. import (login_manager, db)
 from sqlalchemy.exc import IntegrityError
@@ -13,13 +14,13 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 s = URLSafeTimedSerializer('ad40898f84d46bd1d109970e23c0360e')
 
-
+bcrypt = Bcrypt()
 
 mail = Mail()
 
 
 def adduser(form, is_admin):
-    hashed_password = generate_password_hash(form.Password.data)
+    hashed_password = bcrypt.generate_password_hash(form.Password.data).decode('utf-8')
     print(is_admin)
     if is_admin:
         user = User(username=form.username.data,
@@ -135,7 +136,7 @@ def newlogin():
             password = form.password.data
             email = form.email.data
             user = User.query.filter_by(email=email).first()
-            if user and flask_bcrypt.check_password_hash(user.password, password):
+            if user and bcrypt.check_password_hash(user.password, password):
 
                 if user.isadmin:
                     login_user(user)
