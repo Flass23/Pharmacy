@@ -181,7 +181,7 @@ def addorder(total_amount):
 @main.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('main.newlogin'))
+    return redirect(url_for('auth.newlogin'))
 
 
 @main.route("/menu/<int:page_num>", methods=["POST", "GET"])
