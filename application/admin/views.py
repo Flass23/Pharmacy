@@ -181,8 +181,7 @@ def vieworders(order_id):
     cart = Cart.query.filter_by(user_id=current_user.id).first()
     user_order = Order.query.filter_by(id=order_id).first()
     total = 0.00
-    0.00
-    0.00
+
     if user_order:
 
         gross_total = sum(item.product.price * item.quantity for item in user_order.order_items)

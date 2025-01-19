@@ -38,30 +38,24 @@
         <section class="manage-products">
             <h2>Manage Products</h2>
             <div class="actions">
-                <a class="btn" href="{{ url_for('admin.addproducts')}}">Add New Product</a>
-                <a class="btn" href="{{ url_for('admin.products')}}">View Products</a>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.addproducts') }}'">Add Products</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.products') }}'">View Products</button>
             </div>
         </section>
-
         <!-- Manage Orders Section -->
         <section class="manage-orders">
             <h2>Manage Orders</h2>
             <div class="actions">
-            <a class="btn" href="{{ url_for('admin.orders')}}">View All Orders</a>
-                <button class="btn">Pending Orders</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">All Orders</button>bu
             </div>
         </section>
-
         <!-- Manage Users Section -->
         <section class="manage-users">
             <h2>Manage Users</h2>
             <div class="actions">
-                <a class="btn" href="{{url_for('admin.accounts')}}" method="post">View All Users</a>
-
-                <button class="btn">Add New User</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.accounts') }}'">Add New User</button>
             </div>
         </section>
-
     </div>
 </body>
 </html>
