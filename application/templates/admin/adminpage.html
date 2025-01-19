@@ -3,43 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <meta name="description" content="Admin Dashboard for managing the Pharmacy Store.">
+    <title>Admin Dashboard - VitalWay Pharmacy </title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/adminpg.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h2>Admin Dashboard</h2>
-        <ul>
-            <li><a href="/home">Dashboard</a></li>
-            <li><a href="{{ url_for('admin.addproducts')}}">Add Product</a></li>
-            <li><a href="{{url_for('admin.products')}}">Products</a></li>
-            <li><a href="{{ url_for('admin.orders')}}">Orders</a></li>
-            <li><a href="/accounts">Accounts</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+    <!-- Main Content Section -->
+    <div class="main-content">
         <header>
-            <button id="toggleSidebarBtn" class="toggle-sidebar-btn">☰</button>
             <h1>Welcome, Admin</h1>
         </header>
-        <section class="sales-overview">
-            <h2>Sales Overview</h2>
-            <!-- You can add content or other elements here if needed -->
-        </section>
-    </div>
 
-    <!-- Toggle Sidebar Logic -->
-    <script>
-        // Toggle sidebar visibility
-        document.getElementById('toggleSidebarBtn').addEventListener('click', function() {
-            var sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-        });
-    </script>
+        <!-- Dashboard Overview -->
+        <section class="dashboard">
+            <h2>Dashboard Overview</h2>
+            <div class="stats">
+                <div class="stat-card">
+                     <h3>Total Sales for {{ current_year }}-{{ current_month }}</h3>
+                    <p>M{{ total_sales }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p>{{order_count}}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p>{{user_count}}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manage Products Section -->
+        <section class="manage-products">
+            <h2>Manage Products</h2>
+            <div class="actions">
+                <a class="btn" href="{{ url_for('admin.addproducts')}}">Add New Product</a>
+                <a class="btn" href="{{ url_for('admin.products')}}">View Products</a>
+            </div>
+        </section>
+
+        <!-- Manage Orders Section -->
+        <section class="manage-orders">
+            <h2>Manage Orders</h2>
+            <div class="actions">
+            <a class="btn" href="{{ url_for('admin.orders')}}">View All Orders</a>
+                <button class="btn">Pending Orders</button>
+            </div>
+        </section>
+
+        <!-- Manage Users Section -->
+        <section class="manage-users">
+            <h2>Manage Users</h2>
+            <div class="actions">
+                <a class="btn" href="{{url_for('admin.accounts')}}" method="post">View All Users</a>
+
+                <button class="btn">Add New User</button>
+            </div>
+        </section>
+
+    </div>
 </body>
 </html>

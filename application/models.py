@@ -77,14 +77,6 @@ class CartItem(db.Model):
     product_id = db.Column(db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
-
-class Cart(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    cart_items = db.relationship('CartItem', backref='cart', lazy=True)
-
-
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -94,6 +86,14 @@ class Order(db.Model):
     transactionID = db.Column(db.String(90), default='None')
     user_email = db.Column(db.String(30), nullable=False)
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
+
+class Cart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    cart_items = db.relationship('CartItem', backref='cart', lazy=True)
+
+
 
     def calculate_total(self):
        return self.order_items.product_price * self.order_items.quantity

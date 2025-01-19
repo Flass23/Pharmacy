@@ -1,0 +1,144 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #4CAF50;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 40px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #333;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    width: 100%;
+}
+
+header {
+    background-color: #f4f4f4;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.orders-section h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.orders-table th, .orders-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+.orders-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.orders-table td {
+    background-color: #f9f9f9;
+}
+
+.orders-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.orders-table .btn {
+    padding: 8px 15px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.orders-table .view-btn {
+    background-color: #007BFF;
+}
+
+.orders-table .view-btn:hover {
+    background-color: #0056b3;
+}
+
+.orders-table .update-btn {
+    background-color: #FFC107;
+}
+
+.orders-table .update-btn:hover {
+    background-color: #e0a800;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+    }
+
+    .orders-table th, .orders-table td {
+        font-size: 14px;
+    }
+
+    .orders-table .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}

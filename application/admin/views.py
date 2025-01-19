@@ -1,37 +1,31 @@
-from flask import render_template, redirect, url_for, session, request, flash, current_app
+from flask import render_template, redirect, url_for, request, flash, current_app
 from sqlalchemy.exc import IntegrityError
-
-from ..models import *
-
-from flask_login import login_required, current_user, logout_user, login_manager, LoginManager
+from sqlalchemy import func, extract
+from ..models import User, Product, Sales, Order, Cart
+from datetime import datetime,timedelta
+from flask_login import login_required, current_user, logout_user,  LoginManager
 from . import admin
-from ..forms import BusinessForm, addmore, removefromcart, UpdateForm, ProductForm, \
+from ..forms import addmore, removefromcart, UpdateForm, ProductForm, \
     updatestatusform, update
 from ..models import db
 import secrets
-from fileinput import filename
 import os
 from PIL import Image
 
-
 def save_product_picture(file):
     size = (300, 300)
-    images = []
-
+    []
     random_hex = secrets.token_hex(9)
     _, f_ex = os.path.splitext(file.filename)
     post_img_fn = random_hex + f_ex
     post_image_path = os.path.join(current_app.root_path, current_app.config['UPLOAD_PRODUCTS'], post_img_fn)
-
     # Open the image
     img = Image.open(file)
-
     # Resize the image
     img.thumbnail(size)
     # Save the resized image
     img.save(post_image_path)
     return post_img_fn
-
 
 def save_post_picture(form_picture):
     size = (300, 300)
@@ -40,16 +34,12 @@ def save_post_picture(form_picture):
     post_img_fn = random_hex + f_ex
 
     post_image_path = os.path.join(current_app.root_path, current_app.config['UPLOAD_POSTS'], post_img_fn)
-
     # Open the image
     img = Image.open(form_picture)
-
     # Resize the image
     img.thumbnail(size)
-
     # Save the resized image
     img.save(post_image_path)
-
     return post_img_fn
 
 
@@ -66,8 +56,36 @@ def load_user(user_id):
 @admin.route('/adminpage', methods=["POST", "GET"])
 @login_required
 def adminpage():
+    # Get today's date
+    today = datetime.utcnow()
+    current_month = today.month
+    current_year = today.year
+    # Calculate the start of the current month (first day of the month)
+    start_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    # Calculate the end of the current month (last day of the month)
+    next_month = today.replace(day=28) + timedelta(days=4)  # this gets us to the next month
+    end_of_month = next_month.replace(day=1) - timedelta(days=1)  # last day of the current month
+
+    # Query to calculate total sales in the current month
+    total_sales = db.session.query(func.sum(Sales.price * Sales.quantity)) \
+        .filter(Sales.date_ >= start_of_month, Sales.date_ <= end_of_month) \
+        .scalar()
+
+    # If no sales are found, return 0
+    total_sales = total_sales if total_sales else 0.0
+
+    orders = Order.query.filter(
+        extract('month', Order.create_at) == current_month,
+        extract('year', Order.create_at) == current_year,
+        Order.status == 'Completed'  # Filter by status
+    ).all()
+    order_count = len(orders)
     username = current_user.username
-    return render_template('admin/adminpage.html', username = username)
+    user_count = len(User.query.filter_by(isadmin=False).all())
+    return render_template('admin/adminpage.html', username = username, total_sales=total_sales,
+                           current_year=today.year, current_month=today.strftime('%B'), order_count=order_count,
+                           user_count=user_count)
 
 @admin.route('/reports', methods=["POST", "GET"])
 @login_required
@@ -95,7 +113,7 @@ def updateproduct(item_id):
             return redirect(url_for('admin.products'))
         except IntegrityError:
             db.session.rollback()
-            flash('Eish')
+
             return redirect(url_for('admin.products'))
     return render_template('admin/updateproduct.html', form=form, item_id=item_id)
 
@@ -112,6 +130,7 @@ def orders():
 @admin.route('/orders/updatestatus/<int:order_id>', methods=['POST'])
 @login_required
 def updatestatus(order_id):
+    global newstatus
     form = updatestatusform()
     if form.validate_on_submit():
         newstatus = form.status.data
@@ -152,7 +171,7 @@ def addproducts():
 
                 return redirect(url_for("admin.products"))
         else:
-            flash("An error occured")
+            flash("An error occurred")
     return render_template("admin/addproducts.html", form=form)
 
 
@@ -162,8 +181,8 @@ def vieworders(order_id):
     cart = Cart.query.filter_by(user_id=current_user.id).first()
     user_order = Order.query.filter_by(id=order_id).first()
     total = 0.00
-    discount = 0.00
-    gross_total = 0.00
+    0.00
+    0.00
     if user_order:
 
         gross_total = sum(item.product.price * item.quantity for item in user_order.order_items)
@@ -203,18 +222,9 @@ def products():
 @admin.route('/accounts')
 @login_required
 def accounts():
-    user1 = current_user.id
-    user2 = User.query.filter_by(id=user1).first()
-    if not user2.isadmin:
-        flash('You do not have you are not priviledge to visit this site.')
-        return redirect(url_for('main.home'))
-
-    picture = 'sdsd.jpg'
-    users = User.query.filter_by(isadmin=False).all()
-    for user in users:
-        if user.image_file is not None:
-            picture = url_for('static', filename=('css/images/posts/' + user.image_file))
-    return render_template('admin/accounts.html', users=users, picture=picture)
+    # Query non-admin users with pagination
+    non_admin_users = User.query.filter_by(isadmin=False).all()
+    return render_template('admin/accounts.html', non_admin_users=non_admin_users)
 
     
 @admin.route('/remove_from_products/<int:item_id>', methods=['POST', 'GET'])

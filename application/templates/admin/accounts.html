@@ -3,48 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Listing</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/productlist.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Non-Admin Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/adminstyles.css') }}">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Admin Dashboard</h2>
-        <ul>
-            <li><a href="/adminpage">Dashboard</a></li>
-            <li><a href="/add_user">Add Users</a></li>
+    <div class="container">
+        <h1>Non-Admin Users</h1>
 
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-        <header>
-            <h1>Product Listing</h1>
-        </header>
-        <section class="product-list">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Firstname</th>
-                        <th>Lastname</th>
-                        <th>Email</th>
+        <!-- Display table of non-admin users -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.firstname }}</td>
-                        <td>{{ user.lastname }}</td>
-                        <td>{{user.email}}</td>
-
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in non_admin_users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">No non-admin users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

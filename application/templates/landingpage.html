@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Your trusted pharmacy online store, providing quality medicines and health products.">
-    <title>Online Pharmacy Store</title>
+    <title>VitalWay Pharmacy</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-
     <!-- Header Section -->
     <header>
         <h1>VitalWay Pharmacy</h1>
@@ -23,32 +22,30 @@
         <a href="menu"> Shop</a>
 
         <a href="about">About Us</a>
-        <a href="#contact">Contact</a>
-    </nav>
 
+    </nav>
     <!-- Product Showcase Section -->
     <section id="shop" class="container">
         <h2>Featured Products</h2>
         <div class="product-card">
 <img src="{{url_for('static', filename='css/images/pain_.jpg')}}"/>
-
             <h3>Pain Relief Tablet</h3>
             <p>Effective for managing pain. 30 tablets per bottle.</p>
-            <a href="#" class="btn">Buy Now</a>
+            <a href="menu" class="btn">Buy Now</a>
         </div>
         <div class="product-card">
             <img src="{{url_for('static', filename='css/images/cold_medicine.jpg')}}"/>
 
             <h3>Cold Medicine</h3>
             <p>Relieves cold and flu symptoms. 20 capsules per bottle.</p>
-            <a href="#" class="btn">Buy Now</a>
+            <a href="menu" class="btn">Buy Now</a>
         </div>
         <div class="product-card">
             <img src="{{url_for('static', filename='css/images/vit_c.jpg')}}"/>
 
             <h3>Vitamin C Supplement</h3>
             <p>Boosts immunity with Vitamin C. 60 tablets per bottle.</p>
-            <a href="#" class="btn">Buy Now</a>
+            <a href="menu" class="btn">Buy Now</a>
         </div>
     </section>
 
@@ -57,7 +54,7 @@
         <div class="container">
 
             <h3>Our Story</h3>
-            <p>Founded with a simple vision: to make healthcare convenient and affordable. [Your Pharmacy Name] offers a wide range of prescription and over-the-counter medications, as well as wellness products, all backed by expert advice and fast shipping. We’re here to simplify your healthcare journey.</p>
+            <p>Founded with a simple vision: to make healthcare convenient and affordable. VitalWay Pharmacy offers a wide range of prescription and over-the-counter medications, as well as wellness products, all backed by expert advice and fast shipping. We’re here to simplify your healthcare journey.</p>
 
             <h3>What We Offer</h3>
             <ul>
