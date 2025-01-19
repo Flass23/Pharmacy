@@ -12,36 +12,43 @@ import secrets
 import os
 from PIL import Image
 
+import os
+import secrets
+from PIL import Image
+from flask import current_app
+
+
 def save_product_picture(file):
+    # Set the desired size for resizing
     size = (300, 300)
-    []
+
+    # Generate a random hex string for the filename
     random_hex = secrets.token_hex(9)
+
+    # Get the file extension
     _, f_ex = os.path.splitext(file.filename)
+
+    # Generate the final filename (random + extension)
     post_img_fn = random_hex + f_ex
+
+    # Define the path to save the file (UPLOAD_PRODUCTS should be configured in your Flask app)
     post_image_path = os.path.join(current_app.root_path, current_app.config['UPLOAD_PRODUCTS'], post_img_fn)
-    # Open the image
-    img = Image.open(file)
-    # Resize the image
-    img.thumbnail(size)
-    # Save the resized image
-    img.save(post_image_path)
-    return post_img_fn
 
-def save_post_picture(form_picture):
-    size = (300, 300)
-    random_hex = secrets.token_hex(9)
-    _, f_ex = os.path.splitext(form_picture.filename)
-    post_img_fn = random_hex + f_ex
+    try:
+        # Open the image
+        img = Image.open(file)
 
-    post_image_path = os.path.join(current_app.root_path, current_app.config['UPLOAD_POSTS'], post_img_fn)
-    # Open the image
-    img = Image.open(form_picture)
-    # Resize the image
-    img.thumbnail(size)
-    # Save the resized image
-    img.save(post_image_path)
-    return post_img_fn
+        # Resize the image to fit within the size (thumbnail)
+        img.thumbnail(size)
 
+        # Save the resized image
+        img.save(post_image_path)
+
+        return post_img_fn  # Return the filename to store in the database
+    except Exception as e:
+        # If an error occurs during image processing, handle it
+        print(f"Error saving image: {e}")
+        return None
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -185,11 +192,8 @@ def vieworders(order_id):
     if user_order:
 
         gross_total = sum(item.product.price * item.quantity for item in user_order.order_items)
-        if gross_total >=160:
-            discount = round(0.15 * gross_total, 2)
-            total -= discount
-        else:
-            total=gross_total
+
+        total=gross_total
     else:
         flash('Order does no longer exist')
         db.session.delete(user_order)

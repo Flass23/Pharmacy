@@ -6,7 +6,7 @@ from flask_mail import Mail
 
 db = SQLAlchemy()
 UPLOAD_PATH = 'static/css/images/profiles/'
-UPLOAD_POSTS = 'static/css/images/posts/'
+
 UPLOAD_PRODUCTS = 'static/css/images/products/'
 
 login_manager = LoginManager()
@@ -21,7 +21,7 @@ def create_app(config_name):
 
     login_manager.init_app(app)
     app.config['UPLOAD_PATH'] = UPLOAD_PATH
-    app.config['UPLOAD_POSTS'] = UPLOAD_POSTS
+
     app.config['UPLOAD_PRODUCTS'] = UPLOAD_PRODUCTS
 
     db.init_app(app)

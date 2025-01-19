@@ -2,7 +2,10 @@ from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedSerializer
 from flask import current_app
 from . import login_manager, db
+
 from datetime import datetime
+from flask_migrate import Migrate
+
 
 class Product(db.Model):
     __searchable__ = ['productname', 'description']
@@ -81,6 +84,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     create_at = db.Column(db.DateTime, default=datetime.utcnow)
+    #location = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(40), nullable=False, default='Pending')
     payment = db.Column(db.String(40), nullable=False, default='Cash')
     transactionID = db.Column(db.String(90), default='None')

@@ -36,15 +36,14 @@
 
         <!-- Active Orders -->
         <section class="order-list" id="active-orders">
+            {%for order in order%}
             <div class="order-card">
-                <h3>Order #12345</h3>
-                <p>Status: Processing</p>
-                <p>Order Date: 2025-01-10</p>
-                <p>Total: $50.00</p>
-                <button class="track-order">Track Order</button>
-                <button class="reorder">Reorder</button>
-                <button class="view-details" data-order-id="12345">View Details</button>
+                <h3>{{order.id}}</h3>
+                <p>Status: {{order.status}}</p>
+                <p>Order Date:{{order.create_at}}/p>
+
             </div>
+            {%endfor%}
             <!-- Repeat order-card for more orders -->
         </section>
 

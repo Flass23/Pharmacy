@@ -43,7 +43,7 @@ def myorders():
             total = total_amount
 
     return render_template('myorder.html',  order=order,
-                           user=user, total=total, discount=discount)
+                           user=user, total=total)
 
 
 @main.route('/home')
