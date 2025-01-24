@@ -52,7 +52,7 @@ def save_product_picture(file):
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'auth.newlogin'
 
 
 @login_manager.user_loader
@@ -82,12 +82,12 @@ def adminpage():
     # If no sales are found, return 0
     total_sales = total_sales if total_sales else 0.0
 
-    orders = Order.query.filter(
+    order_count = len(Order.query.filter(
         extract('month', Order.create_at) == current_month,
         extract('year', Order.create_at) == current_year,
-        Order.status == 'Completed'  # Filter by status
-    ).all()
-    order_count = len(orders)
+        Order.status == 'Completed').all())  # Filter by status
+
+
     username = current_user.username
     user_count = len(User.query.filter_by(isadmin=False).all())
     return render_template('admin/adminpage.html', username = username, total_sales=total_sales,
@@ -188,7 +188,6 @@ def vieworders(order_id):
     cart = Cart.query.filter_by(user_id=current_user.id).first()
     user_order = Order.query.filter_by(id=order_id).first()
     total = 0.00
-
     if user_order:
 
         gross_total = sum(item.product.price * item.quantity for item in user_order.order_items)

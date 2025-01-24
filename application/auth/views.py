@@ -50,9 +50,11 @@ def send_email(form):
     token = s.dumps(form.Email.data)
     msg = Message('Confirm Email', sender='pitechcorp7@gmail.com', recipients=[form.Email.data])
     link = url_for('auth.confirm_email', token=token, _external=True)
-
-    msg.body = ('Next step is to click the following link to check if Your your email real/ '
-                'link is {}. We are really glad you choose us, remember the more you purchase the you increase your loyalty points, of which you can use later to buy free meals.').format(
+    msg.subject = "Email confirmation"
+    msg.body = ('Your email was recently used to sign up for VitalWay Pharmacy, if you didnt do this ignore '
+                'this email, But if you did.'
+                'The next step is to click the following link to check if Your your email real/ '
+                'link is {}. We are really glad you choose us.').format(
         link)
     try:
         mail.send(msg)

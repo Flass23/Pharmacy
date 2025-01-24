@@ -30,6 +30,7 @@
               <th scope="col">Payment</th>
               <th scope="col">Payment ID</th>
               <th scope="col">Order From</th>
+              <th scope="col">Drop Location</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -55,6 +56,7 @@
                         <td>
                           {{order.user.email}}
                         </td>
+                       <td>{{order.location}}</td>
                       <td>
                        <a href="{{url_for('admin.vieworders', order_id=order.id)}}" method="post">Order Details</a>
                       </td>

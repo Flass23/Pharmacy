@@ -106,7 +106,8 @@ class ProductForm(FlaskForm):
 
 class updatestatusform(FlaskForm):
     status = SelectField('Status', validators=[DataRequired()], choices=[
-                                                                         ('Pending', 'Pending'), ('Ready', 'Ready'),
+                                                                        ('Completed', 'Completed'), ('Aprroved', 'Aprroved'),
+                                                                        ('Cancelled', 'Cancelled'),('Ready', 'Ready'),
                                                                 ('Received', 'Received')])
     submit = SubmitField('Update Status')
 

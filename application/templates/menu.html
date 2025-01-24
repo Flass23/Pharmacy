@@ -7,31 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/productlist.css') }}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<style>
-        /* Custom styles for the search input and button */
-        #searchForm {
-            display: flex;
-            align-items: center;
-        }
-        #searchInput {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        #searchButton {
-            background-color: #4CAF50;  /* Green color */
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-left: 10px;
-        }
-        #searchButton:hover {
-            background-color: #45a049;  /* Darker green on hover */
-        }
-        </style>
+
 
 </head>
 <body>
@@ -48,6 +24,8 @@ s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
 <!--End of Tawk.to Script-->
+
+
     <header>
         <div class="logo">
             <a href="/">Pharmacy Logo</a>
@@ -60,12 +38,13 @@ s0.parentNode.insertBefore(s1,s0);
             <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
         </button>
             </form>
-             <a href="{{ url_for('main.cart') }}" >            <span class="cart-icon"><i class="fas fa-shopping-cart"> <sup>{{total_count}}</sup></i></span>
+             <a href="{{ url_for('main.cart') }}" >
+                 <span class="cart-icon">
+                     <i class="fas fa-shopping-cart">
+                     <sup>{{total_count}}</sup>
+                     </i>
+                 </span>
 </a>
-        </div>
-        <div class="user-actions">
-
-
         </div>
     </header>
 <div class="container">
