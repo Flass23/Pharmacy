@@ -131,6 +131,7 @@ def updateproduct(item_id):
 def orders():
     form = updatestatusform()
     orders = Order.query.all()
+    #total = sum(item.product.price * item.quantity for item in orders.order_items)
     return render_template("admin/orders.html", form=form, orders=orders)
 
 
