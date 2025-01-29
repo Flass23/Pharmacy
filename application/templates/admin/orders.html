@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/adminstyle.css') }}">
 </head>
 <body>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/678904ce825083258e066642/1ihnjlinu';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
     <!-- Main Content Section -->
     <div class="main-content">
         <header>
@@ -44,9 +57,10 @@
                      <form action="{{url_for('admin.updatestatus', order_id=order.id)}}" method="POST">
                        {{ form.hidden_tag() }}
                       {{form.status(class='form-control')}}
-                      {{form.submit(class='buybtn')}}
+                      {{form.submit(class='btn btn-chat')}}
                     </form>
                       </td>
+                      <td> {{order.total}}</td>
                       <td> {{order.total}}</td>
                       <td>
                         {{order.create_at.strftime('%Y - %m - %d @ %H:%M') }}

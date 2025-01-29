@@ -28,8 +28,8 @@
     <main>
         <div class="order-filters">
             <button class="active">Active Orders</button>
-            <button>Completed Orders</button>
-            <button>Canceled Orders</button>
+            <button onclick="window.location.href='{{url_for('main.completed_order')}}'"> Completed Orders</button>
+            <button onclick="window.location.href='{{url_for('main.cancelled_orders')}}'">Canceled Orders</button>
 
 
         </div>
@@ -38,10 +38,10 @@
         <section class="order-list" id="active-orders">
             {%for order in order%}
             <div class="order-card">
-                <h3>{{order.id}}</h3>
+                <h3>Oder ID: {{order.id}}</h3>
                 <p>Status: {{order.status}}</p>
-                <p>Order Date:{{order.create_at}}/p>
-
+                <p>Dest: {{order.location}}</p>
+                <p>Order Date:{{order.create_at.strftime('%Y - %m - %d @ %H:%M')}}</p>
             </div>
             {%endfor%}
             <!-- Repeat order-card for more orders -->
@@ -55,7 +55,7 @@
 
     <!-- Footer Section -->
     <footer>
-        <p>&copy; 2025 Pharmacy. All rights reserved.</p>
+        <p>&copy;2025 VitalWay Pharmacy. All rights reserved.</p>
     </footer>
 
     <script src="orders.js"></script>

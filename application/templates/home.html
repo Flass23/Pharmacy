@@ -73,85 +73,14 @@
             transform: translateY(-2px);
         }
 
-        /* Chat Modal Styling */
-        .chat-modal {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: white;
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            padding: 20px;
-            width: 320px;
-            height: 400px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        .chat-modal.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .chat-modal header {
-            font-size: 18px;
-            font-weight: bold;
-            color: #007bff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-modal .chat-content {
-            height: 280px;
-            overflow-y: auto;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            display: flex;
-            flex-direction: column-reverse;
-        }
-
-        .chat-modal .chat-input-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .chat-modal .chat-input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .chat-modal .send-btn {
+         .chat-btn {
             background-color: #007bff;
             color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
         }
 
-        .chat-modal .send-btn:hover {
+        .chat-btn:hover {
             background-color: #0056b3;
-        }
-
-        /* Close Button */
-        .close-chat {
-            cursor: pointer;
-            font-size: 18px;
-            color: #007bff;
-            background: none;
-            border: none;
+            transform: translateY(-2px);
         }
 
         /* Responsive Styles */

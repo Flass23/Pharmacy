@@ -7,8 +7,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/productlist.css') }}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
 
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
 
+.actions .btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.actions .btn:hover {
+    background-color: #45a049;
+}
+
+    </style>
 </head>
 <body>
 <!--Start of Tawk.to Script-->
@@ -60,11 +81,12 @@ s0.parentNode.insertBefore(s1,s0);
             <div class="product-name">{{ product.product_name }}</div>
             <div class="product-price">M{{ product.price }}</div>
             <div class="product-description"><p>{{ product.description }}</p></div>
-            <a href="#">View Details</a>
-            <form action="{{url_for('main.add_to_cart', item_id=product.id)}}" method="POST">
-                <button value={{product.id}} class='view-details-btn' type="submit">Add To Cart
+            <div class="actions">
+                <button value={{product.id}} onclick="window.location.href='{{ url_for('main.add_to_cart', item_id=product.id)}}'" class='btn chat-btn' type="submit">Add To Cart
               </button>
-            </form>
+
+            </div>
+
         </div>
         {% endfor %}
     </div>

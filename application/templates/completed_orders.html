@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Pharmacy</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
+
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <a href="/">Pharmacy Logo</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for medications...">
+        </div>
+        <div class="user-actions">
+
+            <span class="cart-icon">Cart ({{total_count}})</span>
+
+        </div>
+    </header>
+
+    <!-- Orders Overview Section -->
+    <main>
+        <div class="order-filters">
+            <button onclick="window.location.href='{{url_for('main.myorders')}}'">Active Orders</button>
+            <button class="active" >Completed Orders</button>
+            <button onclick="window.location.href='{{url_for('main.cancelled_orders')}}'">Canceled Orders</button>
+
+
+        </div>
+
+        <!-- Active Orders -->
+        <section class="order-list" id="active-orders">
+            {%for order in order%}
+            <div class="order-card">
+                <h3>Oder ID: {{order.id}}</h3>
+
+                <p>Dest: {{order.location}}</p>
+                <p>Order Date:{{order.create_at}}</p>
+            </div>
+            {%endfor%}
+            <!-- Repeat order-card for more orders -->
+        </section>
+
+        <!-- Completed Orders -->
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 VitalWay Pharmacy. All rights reserved.</p>
+    </footer>
+
+    <script src="orders.js"></script>
+</body>
+</html>

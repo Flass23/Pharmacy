@@ -3,7 +3,7 @@ import secrets
 from flask import render_template, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user, logout_user
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy.util import ordered_column_set
 
 from . import main
 from ..forms import *
@@ -45,6 +45,33 @@ def myorders():
     return render_template('myorder.html',  order=order,
                            user=user, total=total)
 
+
+@main.route('/completed_orders')
+@login_required
+def completed_order():
+    user_id = current_user.id
+    user = User.query.get_or_404(user_id)
+    orders = Order.query.filter_by(user_id = user_id).all()
+    orders_completed = []
+    for i in orders:
+        if i.status == "Completed":
+            orders_completed.append(i)
+    return render_template('completed_orders.html', user=user, orders_completed = orders_completed)
+
+
+@main.route('/cancelled_orders', methods=['GET', 'POST'])
+@login_required
+def cancelled_orders():
+    user_id = current_user.id
+    user = User.query.get_or_404(user_id)
+    discount=0.00
+    total = 0.00
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    order = []
+    for i in orders:
+        if i.status=="Cancelled":
+            order.append(i)
+    return render_template('cancelled_orders.html', order=order,user=user)
 
 @main.route('/home')
 @login_required
@@ -138,24 +165,31 @@ def addorder(total_amount):
     print(tyt)
     existing_order = Order.query.filter_by(user_id=current_user.id, status='Pending').first()
     if existing_order:
+        print("Order exists")
         return redirect(url_for('main.myorders', order_id=existing_order.id))
     else:
+        print("Creating a new order")
 
         neworder = Order(user_id=current_user.id, payment=form.payment.data,
-                            user_email=current_user.email)
+                            user_email=current_user.email, location=form.drop_address.data)
         #hashed_order = flask_bcrypt.generate_password_hash(neworder.id)
         if form.transid.data:
+            print("form id found")
             neworder.transactionID = form.transid.data
         else:
+            print("no id")
             neworder.transactionID ='None'
         db.session.add(neworder)
         try:
+            print('committing...')
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
             flash('Happened again')
+            print("integrity")
             return redirect(url_for('main.cart'))
         db.session.commit()
+
         total_amount = 0
         for item in cart.cart_items:
             order_item = OrderItem(order_id=neworder.id, product_id=item.product.id, product_name=item.product.productname,
@@ -174,7 +208,6 @@ def addorder(total_amount):
         CartItem.query.filter_by(cart_id=cart.id).delete()
         db.session.commit()
     flash('Order added and cart cleared')
-
     return redirect(url_for('main.myorders', total_amount=total_amount))
 
 
@@ -211,7 +244,7 @@ def menu(page_num=1):
                            total_count=total_count, form2=form2, products=current_products, total_pages=total_pages, page_num=page_num)
 
 
-@main.route('/add_to_cart/<int:item_id>', methods=['POST'])
+@main.route('/add_to_cart/<int:item_id>', methods=['POST','GET'])
 @login_required
 def add_to_cart(item_id):
     form = CartlistForm()

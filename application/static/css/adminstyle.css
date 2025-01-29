@@ -7,46 +7,6 @@ body {
     display: flex;
 }
 
-.sidebar {
-    width: 250px;
-    background-color: #4CAF50;
-    color: white;
-    height: 100vh;
-    position: fixed;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.sidebar h2 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 40px;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    margin-bottom: 20px;
-}
-
-.sidebar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    display: block;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.sidebar ul li a:hover {
-    background-color: #333;
-}
 
 .main-content {
     margin-left: 250px;
@@ -125,9 +85,6 @@ header h1 {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .sidebar {
-        width: 200px;
-    }
 
     .main-content {
         margin-left: 200px;

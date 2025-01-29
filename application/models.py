@@ -44,6 +44,7 @@ class User(UserMixin, db.Model):
     orders = db.relationship('Order', backref='user', lazy=True)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
+
     def generate_confirmation_token(self, expiration=4600):
         s = TimedSerializer(current_app.config['SECRET_KEY'], expiration)
 #       serializer = TimedSerializer('your_secret_key', expires_in=3600)
