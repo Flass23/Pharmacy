@@ -60,8 +60,9 @@ s0.parentNode.insertBefore(s1,s0);
                       {{form.submit(class='btn btn-chat')}}
                     </form>
                       </td>
+
                       <td> {{order.total}}</td>
-                      <td> {{order.total}}</td>
+
                       <td>
                         {{order.create_at.strftime('%Y - %m - %d @ %H:%M') }}
                       </td>
@@ -72,7 +73,10 @@ s0.parentNode.insertBefore(s1,s0);
                         </td>
                        <td>{{order.location}}</td>
                       <td>
-                       <a href="{{url_for('admin.vieworders', order_id=order.id)}}" method="post">Order Details</a>
+                          <button class="btn" onclick="window.location.href='{{url_for('main.vieworders', order_id=order.id)}}'">
+                              View Details
+                          </button>
+
                       </td>
                     </tr>
                 {%endfor%}
