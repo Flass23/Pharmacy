@@ -29,11 +29,15 @@ def save_update_profile_picture(form_picture):
 @login_required
 def myorders():
     user_id = current_user.id
+    form2 = Search()
     user = User.query.get_or_404(user_id)
     discount=0.00
     total = 0.00
-    order = Order.query.filter_by(user_id=current_user.id).all()
-
+    order = []
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    for i in orders:
+        if i.status != "cancelled" or order.status != "completed":
+            order.append(i)
     for o in order:
         total_amount = sum(item.product.price * item.quantity for item in o.order_items)
         if total_amount >= 180:
@@ -43,7 +47,7 @@ def myorders():
             total = total_amount
 
     return render_template('myorder.html',  order=order,
-                           user=user, total=total)
+                           user=user, total=total, form2=form2)
 
 
 @main.route('/completed_orders')

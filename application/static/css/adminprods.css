@@ -36,7 +36,7 @@ h1 {
         outline:none;
         border:none;
         border-radius:5px;
-        background-color:rgb(40,192,219);
+        background-color:#45a049;
         color:white;
         cursor:pointer;
         font-size:1em;
@@ -44,7 +44,7 @@ h1 {
         }
 
         .view-details-btn:hover {
-            background-color: #1f56a0;
+            background-color:#46b019;
         }
 
 .product-table img {

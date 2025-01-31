@@ -45,7 +45,7 @@ body {
         .submit-btn {
             width: 100%;
             padding: 15px;
-            background-color: #2d72d9;
+            background-color:#45a049;
             color: white;
             border: none;
             border-radius: 5px;
@@ -53,7 +53,7 @@ body {
             cursor: pointer;
         }
         .submit-btn:hover {
-            background-color: #1f56a0;
+            background-color: #46b049;
         }
         .back-btn {
             display: inline-block;

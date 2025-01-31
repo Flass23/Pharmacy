@@ -9,14 +9,14 @@ body {
 
 
 .main-content {
-    margin-left: 250px;
-    padding: 20px;
-    width: 100%;
+    margin-left: 100px;
+    padding: 0px;
+    width: 90%;
 }
 
 header {
     background-color: #f4f4f4;
-    padding: 20px;
+    padding: 0px;
     margin-bottom: 20px;
     border-radius: 5px;
 }
@@ -58,6 +58,7 @@ header h1 {
 }
 
 .orders-table .btn {
+ background-color: #28a745;
     padding: 8px 15px;
     font-size: 14px;
     color: white;

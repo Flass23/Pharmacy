@@ -14,13 +14,25 @@
         <div class="logo">
             <a href="/">Pharmacy Logo</a>
         </div>
+
         <div class="search-bar">
-            <input type="text" placeholder="Search for medications...">
+                       <form id='searchForm' action="{{ url_for('main.search', page_num=1) }}" method="post">
+            {{ form2.hidden_tag() }}
+            {{form2.keyword}}
+          <button type="submit" id="searchButton">
+            <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+        </button>
+            </form>
         </div>
         <div class="user-actions">
 
-            <span class="cart-icon">Cart ({{total_count}})</span>
-
+                  <a href="{{ url_for('main.cart') }}" >
+                 <span class="cart-icon">
+                     <i class="fas fa-shopping-cart">
+                     <sup>{{total_count}}</sup>
+                     </i>
+                 </span>
+</a>
         </div>
     </header>
 
@@ -55,7 +67,13 @@
 
     <!-- Footer Section -->
     <footer>
-        <p>&copy;2025 VitalWay Pharmacy. All rights reserved.</p>
+        <p>&copy; 2025 VitalWay Pharmacy. All rights reserved.</p>
+        <div class="social-links">
+                <a href="https://www.facebook.com/khauhelo" target="_blank">Facebook</a> |
+                <a href="https://twitter.com/[YourTwitter]" target="_blank">Twitter</a> |
+                <a href="https://www.tiktok.com/@[YourTikTok]" target="_blank">TikTok</a>
+        </div>
+        <p><a href="#home">Back to Top</a></p>
     </footer>
 
     <script src="orders.js"></script>

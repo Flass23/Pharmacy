@@ -46,14 +46,19 @@
         <section class="manage-orders">
             <h2>Manage Orders</h2>
             <div class="actions">
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">All Orders</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Delivered </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Cancelled</button>
+
             </div>
         </section>
         <!-- Manage Users Section -->
         <section class="manage-users">
             <h2>Manage Users</h2>
             <div class="actions">
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.accounts') }}'">Users</button>
                 <button class="btn" onclick="window.location.href='{{ url_for('admin.accounts') }}'">Add New User</button>
+
             </div>
         </section>
     </div>

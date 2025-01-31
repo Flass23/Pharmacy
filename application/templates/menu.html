@@ -6,10 +6,31 @@
     <title>Products - VitalWay Pharmacy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/productlist.css') }}">
+
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
 
 .actions {
+footer {
+            background-color: #333;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 1rem;
+            color: #ddd;
+        }
+
+        footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
     display: flex;
     gap: 10px;
     margin-top: 20px;
@@ -45,20 +66,21 @@ s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
 <!--End of Tawk.to Script-->
-
-
     <header>
         <div class="logo">
             <a href="/">Pharmacy Logo</a>
         </div>
         <div class="search-bar">
-            <form id='searchForm' action="{{ url_for('main.search', page_num=1) }}" method="post">
+                       <form id='searchForm' action="{{ url_for('main.search', page_num=1) }}" method="post">
             {{ form2.hidden_tag() }}
             {{form2.keyword}}
           <button type="submit" id="searchButton">
             <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
         </button>
             </form>
+        </div>
+        <div class="user-actions">
+
              <a href="{{ url_for('main.cart') }}" >
                  <span class="cart-icon">
                      <i class="fas fa-shopping-cart">
@@ -68,6 +90,8 @@ s0.parentNode.insertBefore(s1,s0);
 </a>
         </div>
     </header>
+
+
 <div class="container">
      <div class="d-flex justify-content-between mb-4">
         <h1>Pharmacy Store - Products</h1>
@@ -103,6 +127,14 @@ s0.parentNode.insertBefore(s1,s0);
         {% endif %}
     </div>
 </div>
-
+    <footer>
+        <p>&copy; 2025 VitalWay Pharmacy. All rights reserved.</p>
+        <div class="social-links">
+                <a href="https://www.facebook.com/khauhelo" target="_blank">Facebook</a> |
+                <a href="https://twitter.com/[YourTwitter]" target="_blank">Twitter</a> |
+                <a href="https://www.tiktok.com/@[YourTikTok]" target="_blank">TikTok</a>
+        </div>
+        <p><a href="#home">Back to Top</a></p>
+    </footer>
 </body>
 </html>
