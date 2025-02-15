@@ -26,6 +26,15 @@
 
     <!-- Orders Overview Section -->
     <main>
+                <section class="manage-orders">
+            <h2>Manage Orders</h2>
+            <div class="actions">
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Delivered </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Cancelled</button>
+
+            </div>
+        </section>
         <div class="order-filters">
             <button onclick="window.location.href='{{url_for('main.myorders')}}'">Active Orders</button>
             <button class="active" >Completed Orders</button>
@@ -50,11 +59,6 @@
         <!-- Completed Orders -->
 
     </main>
-
-    <!-- Footer Section -->
-    <footer>
-        <p>&copy; 2025 VitalWay Pharmacy. All rights reserved.</p>
-    </footer>
 
     <script src="orders.js"></script>
 </body>

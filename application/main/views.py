@@ -45,7 +45,6 @@ def myorders():
             total = total_amount - discount
         else:
             total = total_amount
-
     return render_template('myorder.html',  order=order,
                            user=user, total=total, form2=form2)
 
@@ -55,11 +54,7 @@ def myorders():
 def completed_order():
     user_id = current_user.id
     user = User.query.get_or_404(user_id)
-    orders = Order.query.filter_by(user_id = user_id).all()
-    orders_completed = []
-    for i in orders:
-        if i.status == "Completed":
-            orders_completed.append(i)
+    orders_completed = Order.query.filter_by(user_id = user_id).all()
     return render_template('completed_orders.html', user=user, orders_completed = orders_completed)
 
 
@@ -70,11 +65,7 @@ def cancelled_orders():
     user = User.query.get_or_404(user_id)
     discount=0.00
     total = 0.00
-    orders = Order.query.filter_by(user_id=current_user.id).all()
-    order = []
-    for i in orders:
-        if i.status=="Cancelled":
-            order.append(i)
+    order = Order.query.filter_by(user_id=current_user.id).all()
     return render_template('cancelled_orders.html', order=order,user=user)
 
 @main.route('/home')

@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed, MultipleFileField
-from wtforms import StringField, FloatField, PasswordField, SubmitField, BooleanField, validators, TextAreaField, IntegerField,SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from application import *
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, FloatField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField,SelectField
+from wtforms.validators import DataRequired, Length
+
 
 
 class UpdateForm(FlaskForm):
@@ -76,19 +76,17 @@ class addmore(FlaskForm):
     submit = SubmitField("+")
 
 class update(FlaskForm):
-
     newname = StringField("New Name")
     newprice = FloatField("New Price: ")
     quantity = IntegerField("Quantity")
     newdescription = StringField("New Description: ")
     picture = FileField('Upload Product Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
-    category = TextAreaField("How to use")
+
     submit = SubmitField("Commit Update")
 
 
 class confirmpurchase(FlaskForm):
-    payment = SelectField("Payment Method", validators=[DataRequired()], choices=[('Cash', 'Cash'), ('Mpesa', 'Mpesa'),
-                                                                           ('Ecocash', 'Ecocash')])
+    payment = SelectField("Payment Method", validators=[DataRequired()], choices=[('Mpesa', 'Mpesa'), ('Ecocash', 'Ecocash')])
     transid = StringField('TransactionID')
     drop_address = StringField('Address For Collection')
     submit = SubmitField("Buy Cart")
@@ -100,15 +98,13 @@ class ProductForm(FlaskForm):
     product_quantity = IntegerField("Quantity",  validators=[DataRequired()])
     product_price = FloatField("Price", validators=[DataRequired()])
     product_pictures = FileField('Upload Product Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
-    product_usage = TextAreaField("How to use", validators=[DataRequired()])
     submit = SubmitField("Add Product")
 
 
 class updatestatusform(FlaskForm):
-    status = SelectField('Status', validators=[DataRequired()], choices=[
-                                                                        ('Completed', 'Completed'), ('Aprroved', 'Aprroved'),
-                                                                        ('Cancelled', 'Cancelled'),('Ready', 'Ready'),
-                                                                ('Received', 'Received')])
+    status = SelectField('Status', validators=[DataRequired()], choices=[('Pending', 'Pending'),('CompletednReady for delivery', 'CompletednReady for delivery'),
+                                                                         ('Approved for processing', 'Approved for processing'),
+                                                                        ('Cancelled', 'Cancelled')])
     submit = SubmitField('Update Status')
 
 

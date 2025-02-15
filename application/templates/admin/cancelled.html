@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard for managing users' orders in the Pharmacy Store.">
+    <title>Manage Orders - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/adminstyle.css') }}">
+</head>
+<body>
+
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+        <header>
+            <h1>Manage Orders</h1>
+        </header>
+
+        <!-- Orders Table -->
+        <section class="orders-section">
+        <div class="actions">
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Delivered </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Cancelled</button>
+
+            </div>
+            <h2>All Orders</h2>
+
+            <!-- Orders Table -->
+            <table class="orders-table">
+                <thead>
+                    <tr>
+              <th scope="col">Order-Id</th>
+              <th scope="col">Status</th>
+
+              <th scope="col">Date</th>
+              <th scope="col">Payment</th>
+              <th scope="col">Payment ID</th>
+              <th scope="col">Order From</th>
+              <th scope="col">Drop Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {%for order in orders%}
+                    <!-- Repeat this block for each order -->
+                   <tr>
+                        <td>{{order.id}}</td>
+                      <td>
+                        {{order.status}}
+                      </td>
+                      <td>
+                        {{order.create_at.strftime('%Y - %m - %d @ %H:%M') }}
+                      </td>
+                        <td>{{order.payment}}</td>
+                        <td>{{order.transactionID}}</td>
+                        <td>
+                          {{order.user.email}}
+                        </td>
+                       <td>{{order.location}}</td>
+                      <td>
+                          <button class="btn" onclick="window.location.href='{{url_for('admin.vieworders', order_id=order.id)}}'">
+                              View Details
+                          </button>
+
+                      </td>
+                    </tr>
+                {%endfor%}
+                    <!-- Add more rows for additional orders -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

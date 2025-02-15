@@ -8,10 +8,6 @@ from . import admin
 from ..forms import addmore, removefromcart, UpdateForm, ProductForm, \
     updatestatusform, update
 from ..models import db
-import secrets
-import os
-from PIL import Image
-
 import os
 import secrets
 from PIL import Image
@@ -81,18 +77,18 @@ def adminpage():
 
     # If no sales are found, return 0
     total_sales = total_sales if total_sales else 0.0
-
+    pending_orders = len(Order.query.filter_by(status = 'Pending').all())
+    if not pending_orders:
+        pending_orders = 0
     order_count = len(Order.query.filter(
         extract('month', Order.create_at) == current_month,
         extract('year', Order.create_at) == current_year,
-        Order.status == 'Completed').all())  # Filter by status
-
-
+        (Order.status == 'Completed' or Order.status == "Delivered")).all())  # Filter by status
     username = current_user.username
     user_count = len(User.query.filter_by(isadmin=False).all())
     return render_template('admin/adminpage.html', username = username, total_sales=total_sales,
                            current_year=today.year, current_month=today.strftime('%B'), order_count=order_count,
-                           user_count=user_count)
+                           user_count=user_count, pending_orders=pending_orders)
 
 @admin.route('/reports', methods=["POST", "GET"])
 @login_required
@@ -124,15 +120,31 @@ def updateproduct(item_id):
             return redirect(url_for('admin.products'))
     return render_template('admin/updateproduct.html', form=form, item_id=item_id)
 
-
-
 @admin.route('/orders')
 @login_required
 def orders():
     form = updatestatusform()
-    orders = Order.query.all()
+    orders = Order.query.filter_by(status="Pending").all()
+    approved_order = Order.query.filter_by(status="Approved for processing").all()
+
     #total = sum(item.product.price * item.quantity for item in orders.order_items)
-    return render_template("admin/orders.html", form=form, orders=orders)
+    return render_template("admin/orders.html", form=form, orders=orders, approved_order=approved_order)
+
+@admin.route('/delivered')
+@login_required
+def delivered_orders():
+    form = updatestatusform()
+    orders = Order.query.filter_by(status="Delivered").all()
+    #total = sum(item.product.price * item.quantity for item in orders.order_items)
+    return render_template("admin/delivered.html", form=form, orders=orders)
+
+@admin.route('/cancelled')
+@login_required
+def cancelled_orders():
+    form = updatestatusform()
+    orders = Order.query.filter_by(status="Cancelled").all()
+    #total = sum(item.product.price * item.quantity for item in orders.order_items)
+    return render_template("admin/cancelled.html", form=form, orders=orders)
 
 
 @admin.route('/orders/updatestatus/<int:order_id>', methods=['POST'])

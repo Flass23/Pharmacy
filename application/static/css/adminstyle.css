@@ -2,7 +2,7 @@
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 30px;
     box-sizing: border-box;
     display: flex;
 }
@@ -84,6 +84,28 @@ header h1 {
     background-color: #e0a800;
 }
 
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.actions .btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.actions .btn:hover {
+    background-color: #45a049;
+}
+
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
 
@@ -98,5 +120,8 @@ header h1 {
     .orders-table .btn {
         padding: 6px 12px;
         font-size: 12px;
+    }
+    .actions {
+        flex-direction: column;
     }
 }

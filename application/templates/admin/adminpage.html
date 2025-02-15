@@ -46,7 +46,13 @@
         <section class="manage-orders">
             <h2>Manage Orders</h2>
             <div class="actions">
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active
+                    <span class="cart-icon">
+
+                     <sup>{{pending_orders}}</sup>
+
+                 </span>
+                </button>
                 <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Delivered </button>
                 <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Cancelled</button>
 
