@@ -58,8 +58,6 @@ login_manager.login_view = 'auth.newlogin'
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
 @admin.route('/adminpage', methods=["POST", "GET"])
 @login_required
 def adminpage():
@@ -292,15 +290,17 @@ def top_selling():
     chart_div = plot.plot(fig, include_plotlyjs=True, output_type='div')
 
     results1 = (
-        db.session.query(extract('month', Sales.date_).label('month'),
-                         func.sum(Sales.price).label('monthly total')
-                         ).group_by('month')
-        .order_by('month').all()
+        db.session.query(func.date(Sales.date_).label('date'),
+                         func.sum(Sales.price).label('daily total')
+                         ).group_by(func.date(Sales.date_))
+        .order_by(func(Sales.date_)).all()
     )
-    months = [row[0] for row in results1]
+
+    # Format dates like "January 1", "January 2", etc.
+    dates = [datetime.strftime(row[0], '%B %d') for row in results1]
     totals = [row[1] for row in results1]
 
-    line = go.Scatter(x=months, y=totals, mode='lines+markers')
+    line = go.Scatter(x=dates, y=totals, mode='lines+markers')
     layout1 = go.Layout(title="monthly sales over time", xaxis=dict(title='Month'), yaxis=dict(title='Total Sales'))
     fig1 = go.Figure(data=[line], layout=layout1)
     chart_div1 = plot.plot(fig1, include_plotlyjs=True, output_type='div')
@@ -381,18 +381,118 @@ def sales_overtime():
         db.session.query(extract('month', Sales.date_).label('month'),
                          func.sum(Sales.price).label('monthly total')
                          ).group_by('month')
-                          .order_by('month').all()
+                          .order_by('month').desc().all())
+
+
+def top_selling():
+    # Top-Selling Products Query
+    results = (
+        db.session.query(Product.productname,
+                         func.sum(OrderItem.quantity * OrderItem.product_price).label('total Revenue'))
+        .join(Product, Product.id == OrderItem.product_id)
+        .group_by(Product.productname)
+        .order_by(func.sum(OrderItem.quantity * OrderItem.product_price).desc())
+        .limit(10)  # Limit to top 10
+        .all()
     )
-    months = [row[0] for row in results]
-    totals = [row[1] for row in results]
+    product_names = [row[0] for row in results]
+    revenues = [float(row[1]) for row in results]
 
-
-    line = go.Scatter(x=months, y=totals, mode='lines+markers')
-    layout = go.Layout(title="monthly sales over time", xaxis=dict(title='Month'), yaxis=dict(title='Total Sales'))
-    fig =go.Figure(data=[line], layout=layout)
+    # Bar Chart
+    bar = go.Bar(x=product_names, y=revenues, text=revenues, textposition='outside')
+    fig = go.Figure(data=[bar], layout=go.Layout(title="Top-Selling Products by Revenue"))
     chart_div = plot.plot(fig, include_plotlyjs=True, output_type='div')
 
-    return render_template('admin/sales_trends.html', chart=chart_div)
+    # Monthly Sales Over Time Query
+    results1 = (
+        db.session.query(
+            extract('month', Sales.date_).label('month'),
+            func.sum(Sales.price).label('monthly_total')
+        )
+        .group_by('month')
+        .order_by('month')
+        .all()
+    )
+    months = [row[0] for row in results1]
+    totals = [row[1] for row in results1]
+    months = [row[0] for row in results1]
+
+    months = [calendar.month_name[int(month)] for month in months]
+
+# Line Chart
+    line = go.Scatter(x=months, y=totals, mode='lines+markers')
+    fig1 = go.Figure(data=[line], layout=go.Layout(title="Monthly Sales Over Time", xaxis=dict(title='Month'),
+                                                   yaxis=dict(title='Total Sales')))
+    chart_div1 = plot.plot(fig1, include_plotlyjs=True, output_type='div')
+
+    # Payment Method Distribution (Pie Chart)
+    results2 = (
+        db.session.query(
+            Order.payment, func.count(Order.id)
+        )
+        .group_by(Order.payment)
+        .all()
+    )
+    methods = [row[0] for row in results2]
+    counts = [row[1] for row in results2]
+
+    pie = go.Pie(labels=methods, values=counts)
+    fig2 = go.Figure(data=[pie], layout=go.Layout(title="Payment Method Distribution"))
+    chart_div2 = plot.plot(fig2, include_plotlyjs=True, output_type='div')
+
+    # Monthly Candlestick Chart
+    daily_sales = (
+        db.session.query(
+            func.date(Sales.date_).label('sale_date'),
+            func.sum(Sales.price).label('daily_total')
+        )
+        .group_by(func.date(Sales.date_))
+        .order_by(func.date(Sales.date_))
+        .all()
+    )
+
+    monthly_data = {}
+    for sale_date, daily_total in daily_sales:
+        if sale_date and isinstance(sale_date, str):
+            sale_date = datetime.strptime(sale_date, "%Y-%m-%d").date()
+        year, month = sale_date.year, sale_date.month
+        key = (year, month)
+        if key not in monthly_data:
+            monthly_data[key] = []
+        monthly_data[key].append((sale_date, daily_total))
+
+    x, open_data, high_data, low_data, close_data = [], [], [], [], []
+
+    for (year, month), sales in sorted(monthly_data.items()):
+        sales_sorted = sorted(sales, key=lambda x: x[0])
+        daily_totals = [total for _, total in sales_sorted]
+        if not daily_totals:
+            continue
+        open_data.append(daily_totals[0])
+        high_data.append(max(daily_totals))
+        low_data.append(min(daily_totals))
+        close_data.append(daily_totals[-1])
+        date_label = f"{calendar.month_name[month]} {year}"
+        x.append(date_label)
+
+    candlestick = go.Candlestick(
+        x=x, open=open_data, high=high_data, low=low_data, close=close_data,
+        increasing_line_color='green', decreasing_line_color='red'
+    )
+    fig3 = go.Figure(data=[candlestick], layout=go.Layout(
+        title="Monthly Sales Candlestick Chart",
+        xaxis_title="Month", yaxis_title="Sales Amount", xaxis=dict(type='category')
+    ))
+    chart_div3 = plot.plot(fig3, include_plotlyjs=True, output_type='div')
+
+    # Render Template
+    return render_template(
+        'admin/top_selling_products.html',
+        chart=chart_div,
+        chart1=chart_div1,
+        chart2=chart_div2,
+        chart3=chart_div3
+    )
 
 @admin.route('/products')
 @login_required
