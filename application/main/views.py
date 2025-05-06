@@ -1,20 +1,25 @@
 import os
 import secrets
-from flask import render_template, redirect, url_for, flash, current_app
+from flask import render_template, redirect, url_for, flash
 from flask_login import login_required, current_user, logout_user
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.util import ordered_column_set
-
+from sqlalchemy import desc, or_
 from . import main
 from ..forms import *
-
 from ..models import *
+
 
 PRODUCTS_PER_PAGE = 12
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+def calculate_loyalty_points(user, sale_amount):
+    points_earned = int(sale_amount // 10) #a point for each 10 spent
+    user.loyalty_points = points_earned + int(user.loyalty_points or 0)
+
+    db.session.commit()
+    return points_earned
 
 def save_update_profile_picture(form_picture):
     random_hex = secrets.token_hex(9)
@@ -24,6 +29,11 @@ def save_update_profile_picture(form_picture):
     form_picture.save(post_image_path)
     return post_img_Fn
 
+@main.route('/order_history')
+@login_required
+def order_history():
+    orders = Order.query.filter(status='Pending').all()
+    return render_template('orderhistory.html', orders=orders)
 
 @main.route('/myorder', methods=['GET', 'POST'])
 @login_required
@@ -33,19 +43,17 @@ def myorders():
     user = User.query.get_or_404(user_id)
     discount=0.00
     total = 0.00
-    order = []
-    orders = Order.query.filter_by(user_id=current_user.id).all()
-    for i in orders:
-        if i.status != "cancelled" or order.status != "completed":
-            order.append(i)
-    for o in order:
+    orders = Order.query.filter(Order.user_id==current_user.id, or_(Order.status=="Pending", Order.status=="Approved")).order_by(desc(Order.create_at)).all()
+
+    for o in orders:
         total_amount = sum(item.product.price * item.quantity for item in o.order_items)
         if total_amount >= 180:
             discount = 0.15*total_amount
             total = total_amount - discount
+
         else:
             total = total_amount
-    return render_template('myorder.html',  order=order,
+    return render_template('myorder.html',  order=orders,
                            user=user, total=total, form2=form2)
 
 
@@ -54,7 +62,8 @@ def myorders():
 def completed_order():
     user_id = current_user.id
     user = User.query.get_or_404(user_id)
-    orders_completed = Order.query.filter_by(user_id = user_id).all()
+    orders_completed = Order.query.filter(user_id==current_user.id, Order.status=="Completed").order_by(desc(Order.create_at)).all()
+
     return render_template('completed_orders.html', user=user, orders_completed = orders_completed)
 
 
@@ -65,7 +74,7 @@ def cancelled_orders():
     user = User.query.get_or_404(user_id)
     discount=0.00
     total = 0.00
-    order = Order.query.filter_by(user_id=current_user.id).all()
+    order = Order.query.filter_by(user_id=current_user.id, status="Cancelled").all()
     return render_template('cancelled_orders.html', order=order,user=user)
 
 @main.route('/home')
@@ -158,9 +167,11 @@ def addorder(total_amount):
     cart = Cart.query.filter_by(user_id=current_user.id).first()
     tyt = total_amount
     print(tyt)
+    user = User.query.filter_by(id = current_user.id).first()
+
     existing_order = Order.query.filter_by(user_id=current_user.id, status='Pending').first()
     if existing_order:
-        print("Order exists")
+        flash("You still have a pending order, wait for admin to approve before placing another.")
         return redirect(url_for('main.myorders', order_id=existing_order.id))
     else:
         print("Creating a new order")
@@ -197,8 +208,20 @@ def addorder(total_amount):
         for i in cart.cart_items:
             sale = Sales(order_id=neworder.id, product_id=i.product.id, product_name=i.product.productname,
             price=i.product.price, quantity=i.quantity, user_id=neworder.user_id, date_=neworder.create_at)
+            product = Product.query.filter_by(id=i.product.id).first()
+            if product:
+                if product.quantity > 0:
+                    product.quantity -= i.quantity
+                    db.session.add(product)
+                else:
+                    redirect(url_for('main.cart'))
+
             db.session.add(sale)
-            db.session.commit()
+            points_earned = calculate_loyalty_points(user, total_amount)
+            print(points_earned)
+            flash("Purchase successful, you earned {}".format(points_earned) )
+        db.session.commit()
+
         ## clear cart after order
         CartItem.query.filter_by(cart_id=cart.id).delete()
         db.session.commit()

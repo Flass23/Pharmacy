@@ -18,7 +18,9 @@ def make_shell_context():
 def create_Admin():
     hashed_password = generate_password_hash('vitalwaypassword')
 
-    user = User(username="admin",firstname="khauhelo",lastname="Makara",email="khauhelomakara031@gmail.com",isadmin=True,password=hashed_password)
+    user = User(username="admin",firstname="khauhelo",lastname="Makara",
+                email="khauhelomakara031@gmail.com",isadmin=True,
+                password=hashed_password)
     db.session.add(user)
     try:
         db.session.commit()
@@ -26,6 +28,7 @@ def create_Admin():
         db.session.rollback()
 
 if __name__ == '__main__':
-    #server = Server(app.wsgi_app)
-    #server.serve()
-    app.run(host='0.0.0.0', port=4000)
+    server = Server(app.wsgi_app)
+    server.serve(port=8000, host='0.0.0.0')
+
+    #app.run(host='0.0.0.0', port=4000)

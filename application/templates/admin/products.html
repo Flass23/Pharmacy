@@ -6,6 +6,7 @@
   <title>Admin Product Display</title>
  <link rel="stylesheet" href="{{ url_for('static', filename='css/adminprods.css') }}">
 
+
 </head>
 <body>
 
@@ -17,8 +18,12 @@
         {%endfor%}
     {%endif%}
 {%endwith%}
-            <a class='view-details-btn' href="{{ url_for('admin.addproducts')}}">Add More</a>
-
+<header>
+        <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('admin.adminpage')}}'">
+            Dashboard</button>
+        <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('admin.addproducts')}}'">
+            Add More</button>
+        </header>
 <table class="product-table">
   <thead>
     <tr>
@@ -27,7 +32,7 @@
       <th>Description</th>
         <th>Quantity</th>
       <th>Price</th>
-      <th>Stock Status</th>
+      <th>Product Level Status</th>
         <th>Action</th>
     </tr>
   </thead>
@@ -40,7 +45,7 @@
   <td>{{product.description}}</td>
   <td>{{product.quantity}}</td>
   <td>{{product.price}}</td>
-  <td>{{status}}</td>
+  <td>{{product.warning}}</td>
   <td>
       <form action="{{url_for('admin.add_products', item_id=product.id)}}" method="POST">
          <button value={{product.id}} class='view-details-btn' type="submit">+

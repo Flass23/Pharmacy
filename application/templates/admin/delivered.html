@@ -13,14 +13,16 @@
     <div class="main-content">
         <header>
             <h1>Manage Orders</h1>
+                    <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('admin.adminpage')}}'">
+            Dashboard</button>
         </header>
 
         <!-- Orders Table -->
         <section class="orders-section">
         <div class="actions">
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active </button>
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.delivered_orders') }}'">Delivered </button>
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.cancelled_orders') }}'">Cancelled</button>
+                        <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active/Pending Orders</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.delivered_orders') }}'">Complete Orders </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.cancelled_orders') }}'">Cancelled Orders</button>
 
             </div>
             <h2>All Orders</h2>
@@ -44,14 +46,10 @@
                 {%for order in orders%}
                     <!-- Repeat this block for each order -->
                    <tr>
-                        <td>{{order.id}}</td>
+                        <td>{{order.order_id}}</td>
                       <td>
                         {{order.status}}
-                     <form action="{{url_for('admin.updatestatus', order_id=order.id)}}" method="POST">
-                       {{ form.hidden_tag() }}
-                      {{form.status(class='form-control')}}
-                      {{form.submit(class='btn')}}
-                    </form>
+
                       </td>
                       <td>
                         {{order.create_at.strftime('%Y - %m - %d @ %H:%M') }}

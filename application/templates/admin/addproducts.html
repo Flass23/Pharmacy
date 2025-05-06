@@ -6,7 +6,18 @@
     <title>Add Product - VitalWay Pharmacy</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/addprod.css') }}">
 </head>
+
 <body>
+
+<header>
+            <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('admin.adminpage')}}'">
+            Dashboard</button>
+    <button class="btn chat-btn" onclick="window.location.href='{{url_for('admin.products', page_num=1)}}'">
+        Product List
+    </button>
+
+
+</header>
 
 <div class="container">
     <h1>Add New Product</h1>
@@ -34,8 +45,8 @@
             {{ form.product_description(class="form-control") }}
         </div>
         <div class="form-group">
-            {{form.product_usage.label}}
-            {{ form.product_usage(class="form-control") }}
+            {{form.category.label}}
+            {{form.category(class="form-control") }}
         </div>
 
         <!-- Product Image -->
@@ -49,8 +60,9 @@
     </form>
 
     <!-- Back to Products Page -->
-    <a href="{{ url_for('admin.products', page_num=1) }}" class="back-btn">Back to Product List</a>
+
 </div>
+
 
 </body>
 </html>

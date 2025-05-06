@@ -100,9 +100,24 @@ header h1 {
     transition: background-color 0.3s;
 }
 
+
 .actions .btn:hover {
     background-color: #45a049;
 }
+
+        .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
 
 
 
@@ -110,7 +125,7 @@ header h1 {
 @media (max-width: 768px) {
 
     .main-content {
-        margin-left: 200px;
+        margin-left: 0px;
     }
 
     .orders-table th, .orders-table td {

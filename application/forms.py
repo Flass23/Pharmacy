@@ -15,6 +15,7 @@ class UpdateForm(FlaskForm):
     Email = StringField('Email',
                         validators=[
                             Length(min=5, max=30)])
+
     picture = FileField('Profile Picture')
     submit = SubmitField('Update')
 
@@ -80,6 +81,18 @@ class update(FlaskForm):
     newprice = FloatField("New Price: ")
     quantity = IntegerField("Quantity")
     newdescription = StringField("New Description: ")
+    category = SelectField('Category', validators=[DataRequired()], choices=[('Prescription Medication', 'Prescription Medication')
+                                                                        ,('Over-The-Counter', 'Over-The-Counter')
+                                                                        ,('Supplements & Vitamins', 'Supplements & Vitamins')
+                                                                        ,('Personal Care & Hygiene', 'Personal Care & Hygiene')
+                                                                        ,('Medical Supplies & Devices', 'Medical Supplies & Devices'),
+                                                                        ('Baby Care', 'Baby Care'),
+                                                                        ('Health & Wellness', 'Health & Wellness'),
+                                                                        ('Cosmetics & Beauty', 'Cosmetics & Beauty'),
+                                                                        ('Alternative & Herbal Remedies', 'Alternative & Herbal Remedies'),
+                                                                        ('Others', 'Others')
+
+                                                                             ])
     picture = FileField('Upload Product Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
 
     submit = SubmitField("Commit Update")
@@ -98,13 +111,24 @@ class ProductForm(FlaskForm):
     product_quantity = IntegerField("Quantity",  validators=[DataRequired()])
     product_price = FloatField("Price", validators=[DataRequired()])
     product_pictures = FileField('Upload Product Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
+    category = SelectField('Category', validators=[DataRequired()], choices=[('Prescription Medication', 'Prescription Medication')
+                                                                        ,('Over-The-Counter', 'Over-The-Counter')
+                                                                        ,('Supplements & Vitamins', 'Supplements & Vitamins')
+                                                                        ,('Personal Care & Hygiene', 'Personal Care & Hygiene')
+                                                                        ,('Medical Supplies & Devices', 'Medical Supplies & Devices'),
+                                                                        ('Baby Care', 'Baby Care'),
+                                                                        ('Health & Wellness', 'Health & Wellness'),
+                                                                        ('Cosmetics & Beauty', 'Cosmetics & Beauty'),
+                                                                        ('Alternative & Herbal Remedies', 'Alternative & Herbal Remedies'),
+                                                                        ('Others', 'Others')
+
+                                                                             ])
     submit = SubmitField("Add Product")
 
 
 class updatestatusform(FlaskForm):
-    status = SelectField('Status', validators=[DataRequired()], choices=[('Pending', 'Pending'),('CompletednReady for delivery', 'CompletednReady for delivery'),
-                                                                         ('Approved for processing', 'Approved for processing'),
-                                                                        ('Cancelled', 'Cancelled')])
+    status = SelectField('Status', validators=[DataRequired()], choices=[('Completed', 'Completed'),
+                                                                         ('Approved', 'Approved'), ('Cancelled', 'Cancelled')])
     submit = SubmitField('Update Status')
 
 

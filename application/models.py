@@ -1,15 +1,29 @@
-from flask_login import UserMixin, AnonymousUserMixin
+from enum import unique
+from zoneinfo import ZoneInfo
+
+import pytz
+from flask_login import UserMixin
 from itsdangerous import TimedSerializer
 from flask import current_app
-from . import login_manager, db
 
+from . import login_manager, db
+from zoneinfo import ZoneInfo
+import secrets
 from datetime import datetime
 from flask_migrate import Migrate
 
 
-class Product(db.Model):
-    __searchable__ = ['productname', 'description']
 
+def get_localTime(self):
+    utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
+    local_time = utc_now.astimezone(pytz.timezone("Africa/Johannesburg"))
+    return local_time
+
+def get_orderid():
+    return "ORD-"+ secrets.token_hex(5).upper()
+
+class Product(db.Model):
+    __searchable__ = ['productname', 'description', 'category']
     id = db.Column(db.Integer, primary_key=True)
     productname = db.Column(db.String(10), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -18,19 +32,26 @@ class Product(db.Model):
     description = db.Column(db.String(100), nullable=False)
     cart_items = db.relationship('CartItem', backref='product', lazy=True)
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
+    warning = db.Column(db.String(50), default='quantity good')
+    category = db.Column(db.String(50), nullable=True, default='Uncategorized')
 
+    def give_warning(self, quantity):
+        if quantity < 10:
+            warning = "Restock level reached"
 
 class Sales(db.Model):
+    __searchable__ = ['order_id', 'date_', 'user_id']
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_name = db.Column(db.String(30), nullable=False)
     product_id = db.Column(db.Integer, nullable=False)
-    date_ = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_ = db.Column(db.DateTime, nullable=False, default=get_localTime)
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
 class User(UserMixin, db.Model):
+    __searchable__ = ['username', 'firstname', 'email', 'lastname']
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(18), nullable=False, unique=True)
     firstname = db.Column(db.String(30), nullable=False)
@@ -42,6 +63,7 @@ class User(UserMixin, db.Model):
     carts = db.relationship('Cart', backref='user', lazy=True)
     orders = db.relationship('Order', backref='user', lazy=True)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    loyalty_points = db.Column(db.Integer, default=0)
 
 
     def generate_confirmation_token(self, expiration=4600):
@@ -77,20 +99,27 @@ class CartItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
 
 class Order(db.Model):
+    __searchable__ = ['order_id', 'location', 'user_id', 'status', 'payment', 'user_email']
     id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.String(10), nullable=False, default=get_orderid)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    create_at = db.Column(db.DateTime, default=datetime.utcnow)
+    create_at = db.Column(db.DateTime, default=get_localTime)
     location = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(40), nullable=False, default='Pending')
-    payment = db.Column(db.String(40), nullable=False, default='Cash')
+    payment = db.Column(db.String(40), nullable=False, default='Mpesa')
     transactionID = db.Column(db.String(90), default='None')
     user_email = db.Column(db.String(30), nullable=False)
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
 
+    def get_localTime(self):
+
+        return self.create_at.astimezone(ZoneInfo("Africa/Johannesburg"))
+
+
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=get_localTime)
     cart_items = db.relationship('CartItem', backref='cart', lazy=True)
 
     def calculate_total(self):

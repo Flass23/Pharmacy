@@ -7,7 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/adminstyles.css') }}">
 </head>
 <body>
+<header>
+            <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('admin.adminpage')}}'">
+            Dashboard</button>
+</header>
     <div class="container">
+
         <h1>Non-Admin Users</h1>
 
         <!-- Display table of non-admin users -->

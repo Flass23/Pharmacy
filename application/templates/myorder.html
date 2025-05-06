@@ -12,45 +12,44 @@
     <!-- Header Section -->
     <header>
         <div class="logo">
-            <a href="/">Pharmacy Logo</a>
+            <a href="/">Vitalway Pharmacy</a>
         </div>
 
-        <div class="search-bar">
-                       <form id='searchForm' action="{{ url_for('main.search', page_num=1) }}" method="post">
-            {{ form2.hidden_tag() }}
-            {{form2.keyword}}
-          <button type="submit" id="searchButton">
-            <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
-        </button>
-            </form>
-        </div>
+
+
         <div class="user-actions">
+        <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('main.home')}}'">
+            Home</button>
 
-                  <a href="{{ url_for('main.cart') }}" >
-                 <span class="cart-icon">
-                     <i class="fas fa-shopping-cart">
-                     <sup>{{total_count}}</sup>
-                     </i>
-                 </span>
-</a>
+                        <p>Points: {{current_user.loyalty_points}}</p>
+
         </div>
     </header>
 
     <!-- Orders Overview Section -->
     <main>
+                {%with messages = get_flashed_messages()%}
+    {%if messages%}
+        {%for message in messages%}
+            {{ message }}
+        {%endfor%}
+    {%endif%}
+{%endwith%}
         <div class="order-filters">
-            <button class="active">Active Orders</button>
-            <button onclick="window.location.href='{{url_for('main.completed_order')}}'"> Completed Orders</button>
-            <button onclick="window.location.href='{{url_for('main.cancelled_orders')}}'">Canceled Orders</button>
+            <button type="submit" class="btn chat-btn" onclick="window.location.href='{{ url_for('main.myorders')}}'">Active/Pending Orders</button>
+            <button onclick="window.location.href='{{ url_for('main.completed_order') }}'">Order History</button>
+            <button  class="btn chat-btn" onclick="window.location.href='{{ url_for('main.cancelled_orders') }}'">Cancelled Order</button>
 
 
         </div>
+        <p>Order for: {{current_user.email}}</p>
 
         <!-- Active Orders -->
         <section class="order-list" id="active-orders">
+
             {%for order in order%}
             <div class="order-card">
-                <h3>Oder ID: {{order.id}}</h3>
+                <h3>Order ID: {{order.order_id}}</h3>
                 <p>Status: {{order.status}}</p>
                 <p>Dest: {{order.location}}</p>
                 <p>Order Date:{{order.create_at.strftime('%Y - %m - %d @ %H:%M')}}</p>
@@ -65,17 +64,7 @@
         </section>
     </main>
 
-    <!-- Footer Section -->
-    <footer>
-        <p>&copy; 2025 VitalWay Pharmacy. All rights reserved.</p>
-        <div class="social-links">
-                <a href="https://www.facebook.com/khauhelo" target="_blank">Facebook</a> |
-                <a href="https://twitter.com/[YourTwitter]" target="_blank">Twitter</a> |
-                <a href="https://www.tiktok.com/@[YourTikTok]" target="_blank">TikTok</a>
-        </div>
-        <p><a href="#home">Back to Top</a></p>
-    </footer>
 
-    <script src="orders.js"></script>
+
 </body>
 </html>

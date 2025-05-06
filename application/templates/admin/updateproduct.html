@@ -34,7 +34,7 @@
             {{ form.newdescription(class="form-control") }}
         </div>
 
-        <!-- Product Description -->
+
         <div class="form-group">
             {{form.category.label}}
             {{ form.category(class="form-control") }}
@@ -50,8 +50,7 @@
         <button type="submit" class="submit-btn">Confirm Update</button>
     </form>
 
-    <!-- Back to Products Page -->
-    <a href="{{ url_for('products', page_num=1) }}" class="back-btn">Back to Product List</a>
+
 </div>
 
 </body>

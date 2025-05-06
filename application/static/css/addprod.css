@@ -55,14 +55,16 @@ body {
         .submit-btn:hover {
             background-color: #46b049;
         }
-        .back-btn {
-            display: inline-block;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 1em;
-            color: #2d72d9;
+      .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
             text-decoration: none;
+            transition: background-color 0.3s ease;
         }
-        .back-btn:hover {
-            text-decoration: underline;
+
+        .btn:hover {
+            background-color: #218838;
         }

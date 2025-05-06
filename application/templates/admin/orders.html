@@ -17,16 +17,29 @@
 
     <!-- Main Content Section -->
     <div class="main-content">
-        <header>
-            <h1>Manage Orders</h1>
-        </header>
+<header>
+        <div class="logo">
+            <a href="/">Vitalway Pharmacy</a>
+        </div>
+
+        <div class="search-bar">
+                       <form id='searchForm' action="{{ url_for('admin.search') }}" method="post">
+            {{ form2.hidden_tag() }}
+            {{form2.keyword}}
+          <button type="submit" id="searchButton">
+            <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+        </button>
+            </form>
+        </div>
+    </header>
+
 
         <!-- Orders Table -->
         <section class="orders-section">
         <div class="actions">
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active </button>
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.delivered_orders') }}'">Delivered </button>
-                <button class="btn" onclick="window.location.href='{{ url_for('admin.cancelled_orders') }}'">Cancelled</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.orders') }}'">Active/Pending Orders</button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.delivered_orders') }}'">Complete Orders </button>
+                <button class="btn" onclick="window.location.href='{{ url_for('admin.cancelled_orders') }}'">Cancelled Orders</button>
 
             </div>
         <!-- Orders Table -->
@@ -40,7 +53,6 @@
                     <tr>
               <th scope="col">Order-Id</th>
               <th scope="col">Status</th>
-
               <th scope="col">Date</th>
               <th scope="col">Payment</th>
               <th scope="col">Payment ID</th>
@@ -51,10 +63,9 @@
                 </thead>
                 <tbody>
                 {%for order in orders%}
-
                     <!-- Repeat this block for each order -->
                    <tr>
-                        <td>{{order.id}}</td>
+                        <td>{{order.order_id}}</td>
                       <td>
                         {{order.status}}
                      <form action="{{url_for('admin.updatestatus', order_id=order.id)}}" method="POST">
@@ -101,11 +112,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                {%for order in pending_order%}
+                {%for order in approved_order%}
 
                     <!-- Repeat this block for each order -->
                    <tr>
-                        <td>{{order.id}}</td>
+                        <td>{{order.order_id}}</td>
                       <td>
                         {{order.status}}
                      <form action="{{url_for('admin.updatestatus', order_id=order.id)}}" method="POST">

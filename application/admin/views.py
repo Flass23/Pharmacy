@@ -1,17 +1,21 @@
-from flask import render_template, redirect, url_for, request, flash, current_app
+from flask import render_template, redirect, url_for, request, flash, current_app, jsonify
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import func, extract
-from ..models import User, Product, Sales, Order, Cart
+from sqlalchemy import func, extract, or_
+from ..models import User, Product, Sales, Order, Cart, OrderItem
 from datetime import datetime,timedelta
+import calendar
 from flask_login import login_required, current_user, logout_user,  LoginManager
 from . import admin
 from ..forms import addmore, removefromcart, UpdateForm, ProductForm, \
-    updatestatusform, update
+    updatestatusform, update,CartlistForm, Search
 from ..models import db
 import os
 import secrets
 from PIL import Image
 from flask import current_app
+import plotly.graph_objs as go
+import plotly.offline as plot
+
 
 
 def save_product_picture(file):
@@ -77,23 +81,50 @@ def adminpage():
 
     # If no sales are found, return 0
     total_sales = total_sales if total_sales else 0.0
-    pending_orders = len(Order.query.filter_by(status = 'Pending').all())
-    if not pending_orders:
-        pending_orders = 0
-    order_count = len(Order.query.filter(
+    pending_orders = len(Order.query.filter(
         extract('month', Order.create_at) == current_month,
         extract('year', Order.create_at) == current_year,
-        (Order.status == 'Completed' or Order.status == "Delivered")).all())  # Filter by status
+        (Order.status == "Pending")).all())
+    if not pending_orders:
+        pending_orders = 0
+
+
     username = current_user.username
     user_count = len(User.query.filter_by(isadmin=False).all())
     return render_template('admin/adminpage.html', username = username, total_sales=total_sales,
-                           current_year=today.year, current_month=today.strftime('%B'), order_count=order_count,
+                           current_year=today.year, current_month=today.strftime('%B'),
                            user_count=user_count, pending_orders=pending_orders)
+
+
+@admin.route('/search', methods=['POST', 'GET'])
+@login_required
+def search():
+    form = CartlistForm()
+    form2 = Search()
+    keyword = form2.keyword.data
+    item_picture = 'dfdfdf.jpg'
+    total_count = 0
+    count = Cart.query.filter_by(user_id=current_user.id).first()
+    if count:
+        total_count = sum(item.quantity for item in count.cart_items)
+    products = Order.query.filter(
+        Order.order_id.like(f'%{keyword}%')|
+        Order.location.like(f'%{keyword}%' |
+        Order.user_id.like(f'%{keyword}%') |
+        Order.payment.like(f'%{keyword}%') |
+        Order.user_email.like(f'%{keyword}%')
+                            ).all())
+
+    return render_template('orders.html', form=form, item_picture=item_picture,
+                           total_count=total_count, products=products, form2=form2)
+
+
 
 @admin.route('/reports', methods=["POST", "GET"])
 @login_required
 def reports():
     sales = Sales.query.all()
+
     return render_template('admin/reports.html', sales=sales)
 
 @admin.route('/updateproduct/<int:item_id>', methods=['GET', 'POST'])
@@ -124,17 +155,19 @@ def updateproduct(item_id):
 @login_required
 def orders():
     form = updatestatusform()
-    orders = Order.query.filter_by(status="Pending").all()
-    approved_order = Order.query.filter_by(status="Approved for processing").all()
+    form2 = Search()
+    orders = Order.query.filter(Order.status=="Pending").all()
+    approved_order = Order.query.filter_by(status="Approved").all()
 
     #total = sum(item.product.price * item.quantity for item in orders.order_items)
-    return render_template("admin/orders.html", form=form, orders=orders, approved_order=approved_order)
+    return render_template("admin/orders.html", form=form,form2=form2, orders=orders, approved_order=approved_order)
 
 @admin.route('/delivered')
 @login_required
 def delivered_orders():
     form = updatestatusform()
-    orders = Order.query.filter_by(status="Delivered").all()
+    orders = Order.query.filter_by(status="Completed").all()
+
     #total = sum(item.product.price * item.quantity for item in orders.order_items)
     return render_template("admin/delivered.html", form=form, orders=orders)
 
@@ -150,15 +183,16 @@ def cancelled_orders():
 @admin.route('/orders/updatestatus/<int:order_id>', methods=['POST'])
 @login_required
 def updatestatus(order_id):
-    global newstatus
+
     form = updatestatusform()
     if form.validate_on_submit():
-        newstatus = form.status.data
-    orders = Order.query.get_or_404(order_id)
-    orders.status = newstatus
-    print('done updating')
-    db.session.add(orders)
-    db.session.commit()
+        order = Order.query.get_or_404(order_id)
+        order.status = form.status.data
+
+
+        print('done updating')
+        db.session.add(order)
+        db.session.commit()
     return redirect(url_for('admin.orders'))
 
 
@@ -180,8 +214,9 @@ def addproducts():
         if form.is_submitted():
             if form.validate_on_submit:
                 product = Product(productname=form.product_name.data, price=form.product_price.data, quantity=form.product_quantity.data,
-                                  description=form.product_description.data, usage=form.product_usage.data)
+                                  description=form.product_description.data)
                 file = form.product_pictures.data
+                product.category = form.category.data
 
                 _image = save_product_picture(file)
                 product.pictures = _image
@@ -214,6 +249,151 @@ def vieworders(order_id):
     return render_template('admin/vieworders.html', user_order=user_order, total=total)
 
 
+@admin.route('/sales_by_product')
+@login_required
+def sales_by_product():
+    results = (
+        db.session.query(Sales.product_name, db.func.sum(Sales.quantity)).group_by(Sales.product_name).all()
+    )
+    labels = [row[0] for row in results]
+    quantities = [row[1] for row in results]
+    return jsonify({'labels':labels, 'data':quantities})
+
+
+@admin.route('/sales_trends')
+@login_required
+def sales_trend():
+
+    return 0
+
+
+@admin.route('/top_selling')
+@login_required
+def top_selling():
+    #query the data
+    results = (db.session.query(Product.productname, func.sum(OrderItem.quantity*OrderItem.product_price).label('total Revenue')
+                                )
+               .join(Product, Product.id == OrderItem.product_id)
+               .group_by(Product.productname)
+               .order_by(func.sum(OrderItem.quantity*OrderItem.product_price).desc())).all()
+
+    #separate the results into two lists for plotting
+
+    product_names = [row[0] for row in results]
+
+    revenues = [float(row[1]) for row in results]
+
+    #create a bar chart using plotly
+
+    bar = go.Bar(x=product_names, y=revenues, text=revenues, textposition='outside')
+    layout = go.Layout(title="Top-Selling Products by revenue")
+    fig = go.Figure(data=[bar], layout=layout)
+
+    chart_div = plot.plot(fig, include_plotlyjs=True, output_type='div')
+
+    results1 = (
+        db.session.query(extract('month', Sales.date_).label('month'),
+                         func.sum(Sales.price).label('monthly total')
+                         ).group_by('month')
+        .order_by('month').all()
+    )
+    months = [row[0] for row in results1]
+    totals = [row[1] for row in results1]
+
+    line = go.Scatter(x=months, y=totals, mode='lines+markers')
+    layout1 = go.Layout(title="monthly sales over time", xaxis=dict(title='Month'), yaxis=dict(title='Total Sales'))
+    fig1 = go.Figure(data=[line], layout=layout1)
+    chart_div1 = plot.plot(fig1, include_plotlyjs=True, output_type='div')
+
+    results2 = (
+        db.session.query(
+            Order.payment, func.count(Order.id)
+        ).group_by(Order.payment).all()
+    )
+    methods = [row[0] for row in results2]
+    counts = [row[1] for row in results2]
+
+    pie = go.Pie(labels=methods, values=counts)
+    layout2 = go.Layout(title="Payment Method Distribution")
+    fig2 = go.Figure(data=[pie], layout=layout2)
+
+    chart_div2 = plot.plot(fig2, include_plotlyjs=True, output_type='div')
+
+    ##candle sticks
+    daily_sales = (
+        db.session.query(
+            func.date(Sales.date_).label('sale_date'),
+            func.sum(Sales.price).label('daily_total')
+        ).group_by(func.date(Sales.date_))
+        .order_by(func.date(Sales.date_)).all()
+    )
+    monthly_data = {}
+    for sale_date, daily_total in daily_sales:
+        if isinstance(sale_date, str):
+            sale_date = datetime.strptime(sale_date, "%Y-%m-%d").date()
+            year = sale_date.year
+            month = sale_date.month
+            key = (year, month)
+            if key not in monthly_data:
+                monthly_data[key] = []
+                monthly_data[key].append((sale_date, daily_total))
+
+        x = []
+        open_data = []
+        high_data = []
+        low_data = []
+        close_data = []
+
+        for (year, month), sales in sorted(monthly_data.items()):
+            sales_sorted = sorted(sales, key=lambda x:x[0])
+            daily_totals = [total for _, total in sales_sorted]
+            open_price = daily_totals[0]
+            close_price = daily_totals[-1]
+            high_price = max(daily_totals)
+            low_price = min(daily_totals)
+            date_label = f"{calendar.month_name[month]} {year}"
+
+            x.append(date_label)
+            open_data.append(open_price)
+            high_data.append(high_price)
+            low_data.append(low_price)
+            close_data.append(close_price)
+
+            candlestick = go.Candlestick(x=x, open=open_data, high=high_data, low=low_data, close=close_data,
+                                         increasing_line_color='green',
+ decreasing_line_color='red')
+            layout3 = go.Layout(title='Monthly Sales Candlestick chart', xaxis_title="Month", yaxis_title='Sales Amount', xaxis=dict(type='category')
+                                )
+            fig = go.Figure(data=[candlestick], layout=layout3)
+            chart_div3 = plot.plot(fig, include_plotlyjs=True, output_type='div')
+
+
+
+
+    return render_template('admin/top_selling_products.html', chart1=chart_div1 , chart=chart_div,
+                           chart2=chart_div2, chart3=chart_div3)
+
+
+@admin.route('/sales_overtime')
+@login_required
+def sales_overtime():
+    results = (
+        db.session.query(extract('month', Sales.date_).label('month'),
+                         func.sum(Sales.price).label('monthly total')
+                         ).group_by('month')
+                          .order_by('month').all()
+    )
+    months = [row[0] for row in results]
+    totals = [row[1] for row in results]
+
+
+    line = go.Scatter(x=months, y=totals, mode='lines+markers')
+    layout = go.Layout(title="monthly sales over time", xaxis=dict(title='Month'), yaxis=dict(title='Total Sales'))
+    fig =go.Figure(data=[line], layout=layout)
+    chart_div = plot.plot(fig, include_plotlyjs=True, output_type='div')
+
+    return render_template('admin/sales_trends.html', chart=chart_div)
+
 @admin.route('/products')
 @login_required
 def products():
@@ -239,6 +419,7 @@ def products():
 def accounts():
     # Query non-admin users with pagination
     non_admin_users = User.query.filter_by(isadmin=False).all()
+
     return render_template('admin/accounts.html', non_admin_users=non_admin_users)
 
     
